@@ -1,0 +1,6 @@
+{
+  "files.associations": {
+    "*.mustache": "html",
+    "*.mst": "html",
+  }
+}
