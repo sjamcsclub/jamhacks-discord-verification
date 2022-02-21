@@ -1,0 +1,4 @@
+{
+  "watch": ["./lib", "./static", "./templates"],
+  "ext": "js,mjs,json,css,mustache,html"
+}

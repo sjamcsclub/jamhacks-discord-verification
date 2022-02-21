@@ -6,6 +6,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
+    "build": "tsc",
     "serve": "NODE_ENV=production PORT=8333 node --experimental-vm-modules --es-module-specifier-resolution=node .",
     "start": "NODE_ENV=development node --experimental-vm-modules --es-module-specifier-resolution=node node_modules/nodemon/bin/nodemon.js index.js"
   },
