@@ -1,0 +1,9 @@
+#!/bin/sh
+
+__dirname=$(dirname "$0")
+
+. "${__dirname}/_/husky.sh"
+
+bin="${__dirname}/../node_modules/.bin"
+
+"$bin"/lint-staged

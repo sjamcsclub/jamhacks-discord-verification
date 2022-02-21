@@ -7,7 +7,7 @@ import mustacheExpress from "mustache-express"
 import path from "path"
 import ratelimit from "express-rate-limit"
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const dirname = path.dirname(fileURLToPath(import.meta.url))
 
 export const app = express()
 
@@ -16,10 +16,10 @@ const mstEngine = mustacheExpress()
 app.engine("mustache", mstEngine)
 
 app.set("view engine", "mustache")
-app.set("views", __dirname + "/views")
+app.set("views", `${dirname}/views`)
 
 app.set("view engine", "mustache")
-app.set("views", path.join(__dirname, "../templates"))
+app.set("views", path.join(dirname, "../templates"))
 
 app.use(
     express.json(),
@@ -37,6 +37,6 @@ app.use(
 )
 
 app.get("/", (_, response) => response.status(Status.Ok).render("index"))
-app.use("/static", express.static(path.join(__dirname, "../static")))
+app.use("/static", express.static(path.join(dirname, "../static")))
 
 export default app

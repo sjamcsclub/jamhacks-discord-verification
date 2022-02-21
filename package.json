@@ -1,15 +1,27 @@
 {
   "name": "jamhacks-discord-verification",
   "private": true,
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "Luke Zhang <luke_zhang_04@protonmail.com>",
   "license": "BSD-3-clause",
+  "author": "Luke Zhang <luke_zhang_04@protonmail.com>",
+  "scripts": {
+    "lint": "eslint services/*/src --ext ts,js,tsx,jsx --max-warnings=0 --cache",
+    "prepare": "husky install"
+  },
+  "dependencies": {
+    "glob": "^7.2.0"
+  },
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.12.0",
+    "@typescript-eslint/parser": "^5.12.0",
+    "eslint": "^8.9.0",
+    "eslint-plugin-prefer-arrow": "^1.2.3",
+    "eslint-plugin-prettier": "^4.0.0",
+    "husky": "^7.0.4",
+    "lint-staged": "^12.3.4",
     "prettier": "^2.5.1",
     "prettier-plugin-jsdoc": "^0.3.30",
     "prettier-plugin-package": "^1.3.0",
-    "prettier-plugin-prisma": "^3.9.0"
+    "prettier-plugin-prisma": "^3.9.0",
+    "typescript": "^4.5.5"
   }
 }
