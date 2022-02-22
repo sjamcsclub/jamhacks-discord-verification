@@ -2,7 +2,7 @@ arrowParens: "always"
 bracketSpacing: false
 embeddedLanguageFormatting: "auto"
 endOfLine: "lf"
-htmlWhitespaceSensitivity: "strict"
+htmlWhitespaceSensitivity: "ignore"
 bracketSameLine: false
 jsxSingleQuote: false
 printWidth: 99
@@ -23,16 +23,6 @@ jsdocSingleLineComment: false
 jsdocSeparateReturnsFromParam: false
 tsdoc: true
 
-# Sh plugin
-keepComments: true
-indent: 4
-binaryNextLine: true
-switchCaseIndent: true
-spaceRedirects: true
-keepPadding: false
-minify: false
-functionNextLine: true
-
 plugins:
   - ./node_modules/prettier-plugin-jsdoc
   - ./node_modules/prettier-plugin-package
@@ -50,3 +40,12 @@ overrides:
       - "*.mustache"
     options:
       tabWidth: 2
+  - files:
+      - "*.mustache"
+    options:
+      parser: html
+  - files:
+      - "**/*email.mustache"
+      - "**/*Email.mustache"
+    options:
+      htmlWhitespaceSensitivity: strict
