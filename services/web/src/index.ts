@@ -36,7 +36,10 @@ app.use(
     compression(),
 )
 
-app.get("/", (_, response) => response.status(Status.Ok).render("index"))
 app.use("/static", express.static(path.join(dirname, "../static")))
+
+app.get("/", (_, response) =>
+    response.status(Status.Ok).sendFile(path.join(dirname, "../static/index.html")),
+)
 
 export default app
