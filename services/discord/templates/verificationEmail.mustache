@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Verify your account for Jamhacks 6</title>
+
+    <style>
+      .container {
+        width: 100%;
+        padding-right: 12px;
+        padding-left: 12px;
+        margin-right: auto;
+        margin-left: auto;
+      }
+
+      @media (min-width: 576px) {
+        .container {
+          max-width: 540px;
+        }
+      }
+      @media (min-width: 768px) {
+        .container {
+          max-width: 720px;
+        }
+      }
+      @media (min-width: 992px) {
+        .container {
+          max-width: 960px;
+        }
+      }
+      @media (min-width: 1200px) {
+        .container {
+          max-width: 1140px;
+        }
+      }
+      @media (min-width: 1400px) {
+        .container {
+          max-width: 1320px;
+        }
+      }
+
+      #banner-img {
+        width: 100%;
+        height: auto;
+      }
+
+      #content {
+        padding-bottom: 50px;
+        padding-top: 50px;
+      }
+
+      body {
+        color: #7b0ff7;
+        background-color: #efe0ff;
+        font-family: poppins, Arial, sans-serif;
+        font-weight: 500;
+        font-variant: tabular-nums;
+        line-height: 1.5715;
+        padding: 0;
+        margin: 0;
+        font-size: 20px;
+      }
+
+      .profile-img {
+        border-radius: 50%;
+        border-width: 5px;
+        border-style: solid;
+        border-color: #202225;
+      }
+
+      p {
+        margin-top: 0;
+        margin-bottom: 20px;
+      }
+
+      .btn {
+        line-height: 1.5715;
+        position: relative;
+        display: inline-block;
+        font-weight: 700;
+        white-space: nowrap;
+        text-align: center;
+        background-image: none;
+        box-shadow: 0 2px 0 rgba(0, 0, 0, 0.015);
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+        -webkit-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        touch-action: manipulation;
+        padding: 6px 32px;
+        border-radius: 40px;
+        color: rgba(0, 0, 0, 0.85);
+        border: 1px solid #d9d9d9;
+        border-top-color: rgb(217, 217, 217);
+        border-right-color: rgb(217, 217, 217);
+        border-bottom-color: rgb(217, 217, 217);
+        border-left-color: rgb(217, 217, 217);
+        background: #fff;
+        text-decoration: none;
+      }
+
+      .btn-primary {
+        color: #fff;
+        border-color: #7b0ff7;
+        background: #7b0ff7;
+        text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.12);
+        box-shadow: 0 2px 0 rgba(0, 0, 0, 0.045);
+      }
+
+      .btn-primary:focus,
+      .btn-primary:hover {
+        color: #fff;
+        border-color: #9c38ff;
+        background: #9c38ff;
+      }
+
+      #username {
+        margin-top: 20px;
+      }
+
+      .username {
+        font-weight: bold;
+        color: #202225;
+      }
+
+      .discriminator {
+        color: #4c4d4e;
+        font-weight: bold;
+      }
+
+      #info {
+        margin-right: auto;
+        margin-left: auto;
+        margin-bottom: 30px;
+        display: block;
+        width: fit-content;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="content" class="container">
+      <img
+        id="banner-img"
+        src="https://raw.githubusercontent.com/sjamcsclub/jamhacks-discord-verification/master/services/discord/media/banner.png"
+      />
+      <p>Hi {{ name }}, and welcome to Jamhacks 6!</p>
+      <p>
+        Please verify your identity for {{ username }}#{{ discriminator }} so we know it&apos;s
+        you. If this is not your Discord account, you can ignore this email.
+        <strong>Do not verify this identity if it is not you.</strong>
+      </p>
+      <div id="info">
+        <img class="profile-img" src="{{{avatarURL}}}" />
+        <p id="username"
+          ><span class="username">{{ username }}</span
+          ><span class="discriminator">#{{ discriminator }}</span></p
+        >
+        <a href="{{{url}}}" class="btn btn-primary">Verify</a>
+      </div>
+      <p
+        >Full link: <a href="{{{url}}}">{{{url}}}</a></p
+      >
+    </div>
+  </body>
+</html>

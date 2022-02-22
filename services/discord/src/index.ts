@@ -1,8 +1,6 @@
+import "./dotenv"
 import {type Commands, Client, builtins, createCommands, middleware} from "discord-express"
-import dotenv from "dotenv"
 import {verify} from "./verify"
-
-dotenv.config()
 
 const commands: Commands = {
     verify: {
@@ -30,11 +28,22 @@ client.initExpress()
 client.use(...middleware.recommended({allowDMs: true}))
 client.use(middleware.messageCommandParser({prefix: "!"}))
 
+client.use(
+    "verify",
+    middleware.rateLimit({
+        windowMs: 1 * 24 * 60 * 60 * 1000,
+        max: 5,
+        message: "You've tried verifying too many times. Please contact an organizer.",
+    }),
+)
+
 client.command("verify", verify)
 
 client.command("help", builtins.help.handler({commands}))
 
 client.error(async (err, _, response) => {
+    console.error(err)
+
     await response.replyEphemeral(String(err))
 })
 
