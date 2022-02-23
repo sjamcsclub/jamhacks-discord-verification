@@ -1,3 +1,5 @@
+import "./dotenv"
+import * as routes from "./routes"
 import {Status} from "@luke-zhang-04/utils"
 import compression from "compression"
 import express from "express"
@@ -41,5 +43,9 @@ app.use("/static", express.static(path.join(dirname, "../static")))
 app.get("/", (_, response) =>
     response.status(Status.Ok).sendFile(path.join(dirname, "../static/index.html")),
 )
+
+app.get("/verify/:data", routes.verify)
+app.get("/confirm/:data", routes.confirm)
+app.get("/success", routes.success)
 
 export default app

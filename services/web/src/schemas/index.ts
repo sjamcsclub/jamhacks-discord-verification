@@ -1,0 +1,1 @@
+export {dataSchema} from "./data"

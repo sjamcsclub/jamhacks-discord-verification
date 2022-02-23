@@ -48,3 +48,46 @@ body {
   border-color: #9c38ff;
   background: #9c38ff;
 }
+
+.text-primary {
+  color: #7b0ff7;
+}
+
+.container {
+  width: fit-content;
+  padding-right: 12px;
+  padding-left: 12px;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+@media (min-width: 576px) {
+  .container {
+    max-width: 540px;
+  }
+}
+@media (min-width: 768px) {
+  .container {
+    max-width: 720px;
+  }
+}
+@media (min-width: 992px) {
+  .container {
+    max-width: 960px;
+  }
+}
+@media (min-width: 1200px) {
+  .container {
+    max-width: 1140px;
+  }
+}
+@media (min-width: 1400px) {
+  .container {
+    max-width: 1320px;
+  }
+}
+
+@font-face {
+  font-family: "ginto nord";
+  src: url("/static/fonts/ginto-nord.ttf") format("truetype");
+}

@@ -1,0 +1,30 @@
+.profile-img {
+  border-radius: 50%;
+  border-width: 7.5px;
+  border-style: solid;
+  border-color: #202225;
+  background-color: #202225; /* Remove weird white around border */
+}
+
+.nametag .username,
+.nametag .discriminator {
+  font-family: "ginto nord";
+  font-weight: bolder;
+}
+
+.nametag .username {
+  color: #202225;
+  text-shadow: #202225 0.25px 0;
+}
+
+.nametag .discriminator {
+  color: #6e7072;
+  text-shadow: #6e7072 0.25px 0;
+}
+
+.main-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
