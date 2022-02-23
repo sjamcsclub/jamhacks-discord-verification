@@ -81,7 +81,7 @@ export const verify: DiscordExpressHandler = async (request, response) => {
                 },
                 Subject: {
                     Charset: "UTF-8",
-                    Data: "Verify your Discord account for Jamhacks 6",
+                    Data: "Verify your Discord account for JAMHacks 6",
                 },
             },
             Source: "luke@jamhacks.ca",
