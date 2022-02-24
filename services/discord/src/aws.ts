@@ -1,4 +1,4 @@
-import {type SESClientConfig, SESClient} from "@aws-sdk/client-ses"
+import {SESClient, type SESClientConfig} from "@aws-sdk/client-ses"
 
 const config: SESClientConfig = {
     credentials: {

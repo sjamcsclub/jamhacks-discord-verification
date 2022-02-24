@@ -1,5 +1,5 @@
 import "./dotenv"
-import {type Commands, Client, builtins, createCommands, middleware} from "discord-express"
+import {Client, type Commands, builtins, createCommands, middleware} from "discord-express"
 import {verify} from "./verify"
 
 const commands: Commands = {

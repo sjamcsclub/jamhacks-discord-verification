@@ -1,6 +1,6 @@
+import * as yup from "yup"
 import {fetchWithTimeout} from "@luke-zhang-04/utils/node"
 import mailcheck from "mailcheck"
-import * as yup from "yup"
 
 type Suggestion = {
     address: string
