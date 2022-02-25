@@ -38,6 +38,18 @@ client.use(
     }),
 )
 
+client.use("verify", async (request, response, next) => {
+    if (request.channel?.type !== "DM") {
+        try {
+            await request.message?.delete()
+        } catch {}
+
+        return await response.replyEphemeral({content: "Please verify in DMs"})
+    }
+
+    next()
+})
+
 client.command("verify", verify)
 
 client.command("help", builtins.help.handler({commands}))
