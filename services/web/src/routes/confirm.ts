@@ -3,6 +3,7 @@ import {Status, inlineTryPromise, pick} from "@luke-zhang-04/utils"
 import {dataSchema} from "../schemas"
 import db from "../db"
 import {decodeAndVerify} from "@luke-zhang-04/utils/node"
+import fetch from "node-fetch"
 import qs from "query-string"
 
 export const confirm: express.RequestHandler<{
@@ -41,6 +42,8 @@ export const confirm: express.RequestHandler<{
             email: data.email,
         },
     })
+
+    await fetch("http://localhost:8383", {method: "POST", body: data.discord.userId})
 
     return response.status(Status.NoContent).redirect(
         `/success?${qs.stringify({

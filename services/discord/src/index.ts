@@ -1,4 +1,5 @@
 import "./dotenv"
+import "./receiver"
 import {Client, type Commands, builtins, createCommands, middleware} from "discord-express"
 import {verify} from "./verify"
 
@@ -17,7 +18,7 @@ const commands: Commands = {
     help: builtins.help.command,
 }
 
-const client = new Client({
+export const client = new Client({
     intents: ["GUILD_MESSAGES", "GUILDS", "DIRECT_MESSAGES", "GUILD_MEMBERS"],
     partials: ["CHANNEL"],
     authToken: process.env.DISCORD_TOKEN,
