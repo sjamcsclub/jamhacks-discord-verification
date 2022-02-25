@@ -1,7 +1,9 @@
 import * as yup from "yup"
 import {type DiscordExpressHandler} from "discord-express"
+import {type Participant} from "@prisma/client"
 import {SendEmailCommand} from "@aws-sdk/client-ses"
 import {checkEmail} from "./utils/checkEmail"
+import db from "./db"
 import {encodeAndSign} from "@luke-zhang-04/utils/node/crypto"
 import {fileURLToPath} from "url"
 import fs from "fs"
@@ -26,9 +28,11 @@ const sentEmails: {[uid: string]: Set<string>} = {}
 const template = fs.readFileSync(`${dirname}/../templates/verificationEmail.mustache`, "utf8")
 
 export const verify: DiscordExpressHandler = async (request, response) => {
-    const {email} = request.isMessageRequest
-        ? {email: (await messageCommandBodySchema.validate(request.body))._.join(" ")}
-        : await slashCommandBodySchema.validate(request.body)
+    const email = (
+        request.isMessageRequest
+            ? {email: (await messageCommandBodySchema.validate(request.body))._.join(" ")}
+            : await slashCommandBodySchema.validate(request.body)
+    ).email.toLowerCase()
 
     if (sentEmails[request.user.id]?.has(email)) {
         return await response.reply("We've already sent an email to this account")
@@ -38,6 +42,28 @@ export const verify: DiscordExpressHandler = async (request, response) => {
 
     if (error !== undefined) {
         return await response.reply(error)
+    }
+
+    const participant = await db.participant.findUnique({
+        where: {
+            email: email.toLowerCase(),
+        },
+    })
+
+    if (participant === null) {
+        const possibleTypo = await db.$queryRaw<Participant[]>/*sql*/ `
+            select * from jamhacks.Participant
+            where levenshtein(cast(email as char(255)), cast(${email} as char(255))) between 1 and 3
+            order by levenshtein(cast(email as char(255)), cast(${email} as char(255))) asc;
+        `
+
+        if (possibleTypo[0]) {
+            return response.reply(
+                `Sorry! I don't see ${email} registered, but I do see ${possibleTypo[0].email}.`,
+            )
+        }
+
+        return response.reply(`Sorry! I don't see ${email} registered.`)
     }
 
     ;(sentEmails[request.user.id] ??= new Set()).add(email)
@@ -54,7 +80,7 @@ export const verify: DiscordExpressHandler = async (request, response) => {
 
     const renderedEmail = juice(
         mustache.render(template, {
-            name: "YOUR MOM",
+            name: participant.name,
             ...pick(request.user, "username", "discriminator"),
             avatarURL: request.user.avatarURL({size: 128, format: "png"}),
             url: `https://verify.jamhacks.ca/verify/${await encodeAndSign(
@@ -88,5 +114,7 @@ export const verify: DiscordExpressHandler = async (request, response) => {
         }),
     )
 
-    return await response.reply(`Sent an email to ${email}`)
+    return await response.reply(
+        `Hi ${participant.name}! We've sent a link to \`${participant.email}\`. Make sure you verify within the next hour or the link will go bad!`,
+    )
 }

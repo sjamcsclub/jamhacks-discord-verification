@@ -1,6 +1,6 @@
-import {PrismaClient} from "@prisma/client"
+import * as prismaClient from "@prisma/client"
 
-export const prisma = new PrismaClient()
+export const prisma = new prismaClient.PrismaClient()
 
 export {prisma as db}
 
