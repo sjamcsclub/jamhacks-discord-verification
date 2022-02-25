@@ -1,7 +1,30 @@
+import Case from "case"
 import {Status} from "@luke-zhang-04/utils"
 import {client} from "."
 import db from "./db"
 import http from "http"
+import prisma from "@prisma/client"
+
+// eslint-disable-next-line @typescript-eslint/naming-convention
+const {Role} = prisma
+
+const getConclusionMessage = (role: prisma.Role | null): string => {
+    switch (role) {
+        case null:
+        case Role.Organizer:
+            return ""
+        case Role.Hacker:
+            return "Happy hacking!"
+        case Role.Judge:
+            return "Thank you for judging!"
+        case Role.WorkshopRunner:
+            return "Thank you for taking your time to run a workshop!"
+        case Role.Panelist:
+            return "Thank you for being a panelist!"
+        default:
+            return `Thank you for ${Case.sentence(role).toLowerCase()}ing!`
+    }
+}
 
 const server = http.createServer(async (request, response) => {
     const rawBody: Uint8Array[] = []
@@ -29,7 +52,15 @@ const server = http.createServer(async (request, response) => {
         },
     })
 
-    await user.send(`Thank you for verifying, ${userInfo?.name}!`)
+    if (userInfo) {
+        await user.send(
+            `Thank you for verifying, ${
+                userInfo.name
+            }! I'll give you the roles for ${Case.sentence(
+                userInfo.role ?? "unknown role",
+            ).toLowerCase()}s (when I get to it)! ${getConclusionMessage(userInfo.role)}`,
+        )
+    }
 
     response.writeHead(Status.NoContent)
     response.end()

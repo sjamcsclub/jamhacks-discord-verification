@@ -31,7 +31,7 @@ enum Role {
   Organizer
   Judge
   Mentor
-  Workshop
+  WorkshopRunner
   Panelist
   Volunteer
   Sponsor
