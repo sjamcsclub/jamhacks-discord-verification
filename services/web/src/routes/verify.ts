@@ -26,6 +26,9 @@ export const verify: express.RequestHandler<{
             where: {
                 email: data.email,
             },
+            include: {
+                discord: true,
+            },
         }),
     ])
     const img = await res.arrayBuffer()
@@ -33,6 +36,12 @@ export const verify: express.RequestHandler<{
     if (!participant) {
         return response.status(Status.InternalError).json({
             message: "Couldn't find participant with email",
+        })
+    } else if (participant.discord) {
+        return response.status(Status.Ok).render("alreadyVerified", {
+            ...data.discord,
+            email: data.email,
+            name: participant.name,
         })
     }
 

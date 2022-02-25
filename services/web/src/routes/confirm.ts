@@ -26,11 +26,20 @@ export const confirm: express.RequestHandler<{
         where: {
             email: data.email,
         },
+        include: {
+            discord: true,
+        },
     })
 
     if (!participant) {
         return response.status(Status.InternalError).json({
             message: "Couldn't find participant with email",
+        })
+    } else if (participant.discord) {
+        return response.status(Status.Ok).render("alreadyVerified", {
+            ...data.discord,
+            email: data.email,
+            name: participant.name,
         })
     }
 
