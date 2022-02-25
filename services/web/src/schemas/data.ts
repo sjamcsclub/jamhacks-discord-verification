@@ -3,11 +3,14 @@ import * as yup from "yup"
 export const dataSchema = yup.object({
     discord: yup.object({
         username: yup.string().required(),
-        discriminator: yup.string().required(),
+        discriminator: yup.number().required(),
         userId: yup.string().required(),
         avatarURL: yup.string().required(),
     }),
-    email: yup.string().required(),
+    email: yup
+        .string()
+        .transform((email) => (typeof email === "string" ? email.toLowerCase() : email))
+        .required(),
     iss: yup
         .number()
         .test(

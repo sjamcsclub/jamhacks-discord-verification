@@ -1,6 +1,7 @@
 import type * as express from "express"
 import {Status, inlineTryPromise, pick} from "@luke-zhang-04/utils"
 import {dataSchema} from "../schemas"
+import db from "../db"
 import {decodeAndVerify} from "@luke-zhang-04/utils/node"
 import qs from "query-string"
 
@@ -20,14 +21,32 @@ export const confirm: express.RequestHandler<{
         return response.status(Status.BadRequest).json(pick(data, "message", "name"))
     }
 
-    // Verification logic
-    console.log(data)
+    const participant = await db.participant.findUnique({
+        where: {
+            email: data.email,
+        },
+    })
+
+    if (!participant) {
+        return response.status(Status.InternalError).json({
+            message: "Couldn't find participant with email",
+        })
+    }
+
+    await db.discordUser.create({
+        data: {
+            uid: data.discord.userId,
+            username: data.discord.username,
+            discriminator: data.discord.discriminator,
+            email: data.email,
+        },
+    })
 
     return response.status(Status.NoContent).redirect(
         `/success?${qs.stringify({
             ...data.discord,
             email: data.email,
-            name: "YOUR MOM",
+            name: participant.name,
         })}`,
     )
 }
