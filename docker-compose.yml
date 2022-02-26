@@ -1,0 +1,19 @@
+version: "3.7"
+
+services:
+  discord:
+    container_name: jamhacks-discord
+    build:
+      context: ./services/discord
+      network: host
+    ports:
+      - "8383:8383"
+    network_mode: host
+  web:
+    container_name: jamhacks-web
+    build:
+      context: ./services/web
+      network: host
+    ports:
+      - "8333:8333"
+    network_mode: host

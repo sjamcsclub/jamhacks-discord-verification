@@ -5,3 +5,5 @@ nginx.conf linguist-language=nginx
 nginx.conf linguist-detectable=true
 *.sql linguist-detectable=true
 *.prisma linguist-detectable=true
+docker-compose.yml linguist-language=dockerfile
+docker-compose.yml linguist-detectable=true
