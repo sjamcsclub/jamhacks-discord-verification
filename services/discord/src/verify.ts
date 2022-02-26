@@ -78,6 +78,7 @@ export const verify: DiscordExpressHandler = async (request, response) => {
         iss: Date.now(),
     }
 
+    // Use juice to inline styles for email
     const renderedEmail = juice(
         mustache.render(template, {
             name: participant.name,
@@ -115,6 +116,6 @@ export const verify: DiscordExpressHandler = async (request, response) => {
     )
 
     return await response.reply(
-        `Hi ${participant.name}! We've sent a link to \`${participant.email}\`. Make sure you verify within the next hour or the link will go bad!`,
+        `Hi ${participant.name}! We've sent a link to \`${participant.email}\`. Make sure you verify within the next hour or the link will go bad! If you don't see the email in your inbox, check your spam or junk folder.`,
     )
 }

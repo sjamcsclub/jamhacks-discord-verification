@@ -1,6 +1,7 @@
 import "./dotenv"
 import "./receiver"
 import {Client, type Commands, builtins, createCommands, middleware} from "discord-express"
+import {MessageActionRow, MessageButton} from "discord.js"
 import {verify} from "./verify"
 
 const commands: Commands = {
@@ -52,7 +53,24 @@ client.use("verify", async (request, response, next) => {
 
 client.command("verify", verify)
 
-client.command("help", builtins.help.handler({commands}))
+client.command(
+    "help",
+    builtins.help.handler({
+        commands,
+        footerText: "Copyright (C) 2022 - Luke Zhang",
+        components: [
+            new MessageActionRow({
+                components: [
+                    new MessageButton({
+                        label: "Github",
+                        url: "https://github.com/sjamcsclub/jamhacks-discord-verification",
+                        style: "LINK",
+                    }),
+                ],
+            }),
+        ],
+    }),
+)
 
 client.error(async (err, _, response) => {
     console.error(err)
@@ -72,4 +90,10 @@ client.on("ready", (_client) => {
             },
         ],
     })
+})
+
+client.on("guildMemberAdd", async (member) => {
+    await member.send(
+        `Hi ${member.user.username}, and welcome to JAMHacks! You probably don't want to do this, but we have to. Please verify your email with \`!verify <email>\` or \`/verify email: <email>\`.`,
+    )
 })

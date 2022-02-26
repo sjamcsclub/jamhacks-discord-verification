@@ -1,3 +1,8 @@
+/**
+ * @file a Simple HTTP server which only runs on localhost (8383). It takes the body of the request
+ *   as the user id, and DMs the user, telling them their email was successfully verified.
+ */
+
 import Case from "case"
 import {Status} from "@luke-zhang-04/utils"
 import {client} from "."
