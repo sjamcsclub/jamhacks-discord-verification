@@ -1,5 +1,5 @@
 import type * as express from "express"
-import {Status, inlineTryPromise, pick} from "@luke-zhang-04/utils"
+import {Status} from "@luke-zhang-04/utils"
 import {dataSchema} from "../schemas"
 import db from "../db"
 import {decodeAndVerify} from "@luke-zhang-04/utils/node"
@@ -11,16 +11,9 @@ export const confirm: express.RequestHandler<{
 }> = async (request, response) => {
     const {data: rawData} = request.params
 
-    const data = await inlineTryPromise(
-        async () =>
-            await dataSchema.validate(
-                decodeAndVerify(rawData, "sha384", process.env.HASH_TOKEN, "base64url"),
-            ),
+    const data = await dataSchema.validate(
+        decodeAndVerify(rawData, "sha384", process.env.HASH_TOKEN, "base64url"),
     )
-
-    if (data instanceof Error) {
-        return response.status(Status.BadRequest).json(pick(data, "message", "name"))
-    }
 
     const participant = await db.participant.findUnique({
         where: {
