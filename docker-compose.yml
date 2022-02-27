@@ -9,6 +9,12 @@ services:
     ports:
       - "8383:8383"
     network_mode: host
+  sync:
+    container_name: jamhacks-sync
+    build:
+      context: ./services/sync
+      network: host
+    network_mode: host
   web:
     container_name: jamhacks-web
     build:

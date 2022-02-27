@@ -3,15 +3,19 @@
  *   as the user id, and DMs the user, telling them their email was successfully verified.
  */
 
+import {DiscordAPIError, type Guild} from "discord.js"
+import {Status, pick} from "@luke-zhang-04/utils"
 import Case from "case"
-import {Status} from "@luke-zhang-04/utils"
 import {client} from "."
 import db from "./db"
+import {guildId} from "./globals"
 import http from "http"
 import prisma from "@prisma/client"
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 const {Role} = prisma
+
+let guild: Guild | undefined
 
 const getConclusionMessage = (role: prisma.Role | null): string => {
     switch (role) {
@@ -31,7 +35,46 @@ const getConclusionMessage = (role: prisma.Role | null): string => {
     }
 }
 
-const server = http.createServer(async (request, response) => {
+const getMemberId: http.RequestListener = async (request: http.IncomingMessage, response) => {
+    const match = request.url?.match(
+        /\/getUser\/(?<username>[0-9a-zA-Z]+)\/(?<discriminator>[0-9]{4})$/u,
+    )
+    const username = match?.groups?.username
+    const discriminator = match?.groups?.discriminator
+
+    if (username && discriminator) {
+        const _guild = (guild ??=
+            client.guilds.cache.find((cacheGuild) => cacheGuild.id === guildId) ??
+            (await client.guilds.fetch(guildId)))
+
+        let user = _guild.members.cache.find(
+            ({user: _user}) =>
+                _user.username === username && _user.discriminator === discriminator,
+        )?.user
+
+        if (user === undefined) {
+            user = (await _guild.members.fetch()).find(
+                ({user: _user}) =>
+                    _user.username === username && _user.discriminator === discriminator,
+            )?.user
+        }
+
+        if (user) {
+            response.writeHead(Status.Ok, {
+                "Content-Type": "application/json",
+            })
+            response.end(JSON.stringify(pick(user, "id", "username", "discriminator")))
+        } else {
+            response.writeHead(Status.NotFound)
+            response.end()
+        }
+
+        return
+    }
+}
+
+const sendVerifiedMessage: http.RequestListener = async (request, response) => {
+    // Default behaviour: DM user with uid from body
     const rawBody: Uint8Array[] = []
     let uid = ""
 
@@ -49,6 +92,7 @@ const server = http.createServer(async (request, response) => {
 
     const user =
         client.users.cache.find((_user) => _user.id === uid) ?? (await client.users.fetch(uid))
+
     const userInfo = await db.participant.findFirst({
         where: {
             discord: {
@@ -69,6 +113,27 @@ const server = http.createServer(async (request, response) => {
 
     response.writeHead(Status.NoContent)
     response.end()
+}
+
+const server = http.createServer(async (request, response) => {
+    try {
+        // Get user by username and discriminator from jamhacks server
+        if (request.url && /\/getUser\//u.test(request.url) && request.method === "GET") {
+            await getMemberId(request, response)
+
+            return
+        }
+
+        await sendVerifiedMessage(request, response)
+    } catch (err) {
+        if (err instanceof DiscordAPIError) {
+            response.writeHead(err.httpStatus)
+            response.end(err.toString())
+        } else {
+            response.writeHead(Status.InternalError)
+            response.end(String(err))
+        }
+    }
 })
 
 const port = Number(process.env.PORT) || 8383

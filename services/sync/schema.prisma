@@ -1,0 +1,38 @@
+datasource db {
+  url      = env("DB_URL")
+  provider = "mysql"
+}
+
+generator client {
+  provider      = "prisma-client-js"
+  // output = "./.prisma/client"
+  binaryTargets = ["native"]
+}
+
+model Participant {
+  email String @id @db.VarChar(64)
+  name  String @db.VarChar(64)
+  role  Role?
+
+  discord DiscordUser?
+}
+
+model DiscordUser {
+  uid           String @id @db.Char(18)
+  username      String @db.VarChar(64)
+  discriminator Int
+  email         String @unique @db.VarChar(64)
+
+  participant Participant @relation(fields: [email], references: [email])
+}
+
+enum Role {
+  Hacker
+  Organizer
+  Judge
+  Mentor
+  WorkshopRunner
+  Panelist
+  Volunteer
+  Sponsor
+}
