@@ -32,4 +32,10 @@ log() {
     fi
 }
 
-/bin/docker-compose -f "${__dirname}/docker-compose.yml" up --abort-on-container-exit 2>&1 | log "log" true
+onExit() {
+    /bin/docker-compose -f "${__dirname}/docker-compose.yml" down 2>&1 | log "log"
+}
+
+trap onExit SIGINT SIGTERM
+
+/bin/docker-compose -f "${__dirname}/docker-compose.yml" up --abort-on-container-exit 2>&1 | log "log"
