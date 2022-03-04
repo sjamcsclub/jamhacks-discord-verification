@@ -3,7 +3,7 @@ import * as yup from "yup"
 export const dataSchema = yup.object({
     discord: yup.object({
         username: yup.string().required(),
-        discriminator: yup.number().required(),
+        discriminator: yup.string().required(),
         userId: yup.string().required(),
         avatarURL: yup.string().required(),
     }),

@@ -58,9 +58,9 @@ const getDiscordUid = async (
     })
 
     if (request.ok) {
-        return ((await request.json()) as {id: string}).id
+        return ((await request.json()) as {id: string})?.id
     }
-    console.error(await request.text())
+    console.error("ERROR", (await request.text()) || request.status)
 
     return undefined
 }
@@ -80,24 +80,22 @@ const pull = async (row: TransformedRow): Promise<void> => {
                 | [username: string, discriminator: string]
             const uid = await getDiscordUid(...userData)
 
-            if (uid) {
-                await db.discordUser.upsert({
-                    where: {
-                        email: row.email,
-                    },
-                    update: {
-                        username: userData[0],
-                        discriminator: Number(userData[1]),
-                        uid,
-                    },
-                    create: {
-                        username: userData[0],
-                        discriminator: Number(userData[1]),
-                        uid,
-                        email: row.email,
-                    },
-                })
-            }
+            await db.discordUser.upsert({
+                where: {
+                    email: row.email,
+                },
+                update: {
+                    username: userData[0],
+                    discriminator: userData[1],
+                    uid,
+                },
+                create: {
+                    username: userData[0],
+                    discriminator: userData[1],
+                    uid,
+                    email: row.email,
+                },
+            })
         }
     } else {
         const userData = row.discordAccount?.split("#") as
@@ -110,16 +108,15 @@ const pull = async (row: TransformedRow): Promise<void> => {
                 email: row.email,
                 name: row.name,
                 role: row.role,
-                discord:
-                    userData && uid
-                        ? {
-                              create: {
-                                  username: userData[0],
-                                  discriminator: Number(userData[1]),
-                                  uid,
-                              },
-                          }
-                        : undefined,
+                discord: userData
+                    ? {
+                          create: {
+                              username: userData[0],
+                              discriminator: userData[1],
+                              uid,
+                          },
+                      }
+                    : undefined,
             },
         })
     }
@@ -155,6 +152,7 @@ const push = async (
 }
 
 const sync = async (): Promise<void> => {
+    console.log("Syncing")
     doc.resetLocalCache()
     await doc.loadInfo()
 
@@ -179,6 +177,7 @@ const sync = async (): Promise<void> => {
     await sheet.addRows(newRows)
 
     await sheet.saveUpdatedCells()
+    console.log("Finished sync")
 }
 
 await sync()

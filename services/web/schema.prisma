@@ -18,12 +18,14 @@ model Participant {
 }
 
 model DiscordUser {
-  uid           String @id @db.Char(18)
-  username      String @db.VarChar(64)
-  discriminator Int
-  email         String @unique @db.VarChar(64)
+  uid           String? @db.Char(18)
+  username      String  @db.VarChar(64)
+  discriminator String  @db.Char(4)
+  email         String  @unique @db.VarChar(64)
 
   participant Participant @relation(fields: [email], references: [email])
+
+  @@id([username, discriminator])
 }
 
 enum Role {
