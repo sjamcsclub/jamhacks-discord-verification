@@ -2,6 +2,7 @@ import "./dotenv"
 import "./receiver"
 import {Client, type Commands, builtins, createCommands, middleware} from "discord-express"
 import {MessageActionRow, MessageButton} from "discord.js"
+import db from "./db"
 import {verify} from "./verify"
 
 const commands: Commands = {
@@ -22,8 +23,9 @@ const commands: Commands = {
 export const client = new Client({
     intents: ["GUILD_MESSAGES", "GUILDS", "DIRECT_MESSAGES", "GUILD_MEMBERS"],
     partials: ["CHANNEL"],
-    authToken: process.env.DISCORD_TOKEN,
 })
+
+await client.login(process.env.DISCORD_TOKEN)
 
 client.registerCommands(createCommands(commands), process.env.DISCORD_CLIENT_ID)
 client.initExpress()
@@ -97,7 +99,26 @@ client.on("ready", (_client) => {
 })
 
 client.on("guildMemberAdd", async (member) => {
-    await member.send(
-        `Hi ${member.user.username}, and welcome to JAMHacks! You probably don't want to do this, but we have to. Please verify your email with \`!verify <email>\` or \`/verify email: <email>\`.`,
-    )
+    const organizer = await db.participant.findFirst({
+        where: {
+            discord: {
+                is: {
+                    username: member.user.username,
+                    discriminator: member.user.discriminator,
+                },
+            },
+            role: "Organizer",
+        },
+    })
+
+    if (organizer) {
+        await member.send(
+            `Hi ${organizer.name}, I can't give admin roles for some reason, so you'll have to wait for someone to give you the organizer role.`,
+        )
+        await member.setNickname(organizer.name)
+    } else {
+        await member.send(
+            `Hi ${member.user.username}, and welcome to JAMHacks! You probably don't want to do this, but we have to. Please verify your email with \`!verify <email>\` or \`/verify email: <email>\`.`,
+        )
+    }
 })

@@ -6,18 +6,15 @@
 import {DiscordAPIError, type Guild} from "discord.js"
 import {Status, pick} from "@luke-zhang-04/utils"
 import Case from "case"
+import {Role} from "./roles"
 import {client} from "."
 import db from "./db"
 import {guildId} from "./globals"
 import http from "http"
-import prisma from "@prisma/client"
-
-// eslint-disable-next-line @typescript-eslint/naming-convention
-const {Role} = prisma
 
 let guild: Guild | undefined
 
-const getConclusionMessage = (role: prisma.Role | null): string => {
+const getConclusionMessage = (role: Role | null): string => {
     switch (role) {
         case null:
         case Role.Organizer:
@@ -37,9 +34,11 @@ const getConclusionMessage = (role: prisma.Role | null): string => {
 
 const getMemberId: http.RequestListener = async (request: http.IncomingMessage, response) => {
     const match = request.url?.match(
-        /\/getUser\/(?<username>[0-9a-zA-Z]+)\/(?<discriminator>[0-9]{4})$/u,
+        /\/getUser\/(?<username>[0-9a-zA-Z%]+)\/(?<discriminator>[0-9]{4})$/u,
     )
     const username = match?.groups?.username
+        ? decodeURIComponent(match.groups.username)
+        : undefined
     const discriminator = match?.groups?.discriminator
 
     if (username && discriminator) {
@@ -102,7 +101,7 @@ const sendVerifiedMessage: http.RequestListener = async (request, response) => {
     })
 
     if (userInfo) {
-        await user.send(
+        await user?.send(
             `Thank you for verifying, ${
                 userInfo.name
             }! I'll give you the roles for ${Case.sentence(
