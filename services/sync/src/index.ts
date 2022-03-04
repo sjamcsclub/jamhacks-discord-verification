@@ -185,4 +185,4 @@ await sync()
 
 setInterval(async () => {
     await sync()
-}, Number(process.env.SYNC_MS) ?? 3_600_000)
+}, Number(process.env.SYNC_MS) || 3_600_000)
