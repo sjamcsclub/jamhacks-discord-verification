@@ -101,12 +101,10 @@ const sendVerifiedMessage: http.RequestListener = async (request, response) => {
     })
 
     if (userInfo) {
-        await user?.send(
-            `Thank you for verifying, ${
-                userInfo.name
-            }! I'll give you the roles for ${Case.sentence(
+        await user.send(
+            `Thank you for verifying, ${userInfo.name}! I'll give you the role for ${Case.sentence(
                 userInfo.role ?? "unknown role",
-            ).toLowerCase()}s (when I get to it)! ${getConclusionMessage(userInfo.role)}`,
+            ).toLowerCase()}s! ${getConclusionMessage(userInfo.role)}`,
         )
     }
 
