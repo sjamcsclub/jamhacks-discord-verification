@@ -4,15 +4,20 @@
  */
 
 import {DiscordAPIError, type Guild} from "discord.js"
+import {Role, getNewRoles} from "./roles"
 import {Status, pick} from "@luke-zhang-04/utils"
 import Case from "case"
-import {Role} from "./roles"
 import {client} from "."
 import db from "./db"
 import {guildId} from "./globals"
 import http from "http"
 
 let guild: Guild | undefined
+
+const getGuild = async (): Promise<Guild> =>
+    (guild ??=
+        client.guilds.cache.find((cacheGuild) => cacheGuild.id === guildId) ??
+        (await client.guilds.fetch(guildId)))
 
 const getConclusionMessage = (role: Role | null): string => {
     switch (role) {
@@ -42,9 +47,7 @@ const getMemberId: http.RequestListener = async (request: http.IncomingMessage, 
     const discriminator = match?.groups?.discriminator
 
     if (username && discriminator) {
-        const _guild = (guild ??=
-            client.guilds.cache.find((cacheGuild) => cacheGuild.id === guildId) ??
-            (await client.guilds.fetch(guildId)))
+        const _guild = await getGuild()
 
         let user = _guild.members.cache.find(
             ({user: _user}) =>
@@ -72,7 +75,7 @@ const getMemberId: http.RequestListener = async (request: http.IncomingMessage, 
     }
 }
 
-const sendVerifiedMessage: http.RequestListener = async (request, response) => {
+const postVerification: http.RequestListener = async (request, response) => {
     // Default behaviour: DM user with uid from body
     const rawBody: Uint8Array[] = []
     let uid = ""
@@ -98,14 +101,24 @@ const sendVerifiedMessage: http.RequestListener = async (request, response) => {
                 uid,
             },
         },
+        include: {
+            discord: true,
+        },
     })
 
-    if (userInfo) {
+    if (userInfo?.discord) {
+        const _guild = await getGuild()
+
         await user.send(
             `Thank you for verifying, ${userInfo.name}! I'll give you the role for ${Case.sentence(
                 userInfo.role ?? "unknown role",
             ).toLowerCase()}s! ${getConclusionMessage(userInfo.role)}`,
         )
+
+        const member = _guild.members.cache.find((_member) => _member.user.id === user.id)
+
+        await member?.setNickname(userInfo.name)
+        await member?.roles.add(getNewRoles(userInfo.role))
     }
 
     response.writeHead(Status.NoContent)
@@ -121,7 +134,7 @@ const server = http.createServer(async (request, response) => {
             return
         }
 
-        await sendVerifiedMessage(request, response)
+        await postVerification(request, response)
     } catch (err) {
         if (err instanceof DiscordAPIError) {
             response.writeHead(err.httpStatus)

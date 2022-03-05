@@ -48,6 +48,9 @@ export const verify: DiscordExpressHandler = async (request, response) => {
         where: {
             email: email.toLowerCase(),
         },
+        include: {
+            discord: true,
+        },
     })
 
     if (participant === null) {
@@ -64,6 +67,10 @@ export const verify: DiscordExpressHandler = async (request, response) => {
         }
 
         return response.reply(`Sorry! I don't see ${email} registered.`)
+    } else if (participant.discord) {
+        return response.reply(
+            "You're already verified! If there is a problem, please contact an organizer.",
+        )
     }
 
     ;(sentEmails[request.user.id] ??= new Set()).add(email)

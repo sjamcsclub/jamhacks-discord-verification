@@ -1,1 +1,1 @@
-export const guildId = "946903773329109042"
+export const guildId = "948335470792814695"

@@ -3,6 +3,8 @@ import "./receiver"
 import {Client, type Commands, builtins, createCommands, middleware} from "discord-express"
 import {MessageActionRow, MessageButton} from "discord.js"
 import db from "./db"
+import {getNewRoles} from "./roles"
+import {guildId} from "./globals"
 import {verify} from "./verify"
 
 const commands: Commands = {
@@ -68,8 +70,8 @@ client.command(
             new MessageActionRow({
                 components: [
                     new MessageButton({
-                        label: "Github",
-                        url: "https://github.com/sjamcsclub/jamhacks-discord-verification",
+                        label: "Website",
+                        url: "https://jamhacks.ca",
                         style: "LINK",
                     }),
                 ],
@@ -99,26 +101,56 @@ client.on("ready", (_client) => {
 })
 
 client.on("guildMemberAdd", async (member) => {
-    const organizer = await db.participant.findFirst({
-        where: {
-            discord: {
-                is: {
-                    username: member.user.username,
-                    discriminator: member.user.discriminator,
+    if (member.guild.id === guildId) {
+        const organizer = await db.participant.findFirst({
+            where: {
+                discord: {
+                    is: {
+                        username: member.user.username,
+                        discriminator: member.user.discriminator,
+                    },
                 },
+                role: "Organizer",
             },
-            role: "Organizer",
-        },
-    })
+        })
 
-    if (organizer) {
-        await member.send(
-            `Hi ${organizer.name}, I can't give admin roles for some reason, so you'll have to wait for someone to give you the organizer role.`,
-        )
-        await member.setNickname(organizer.name)
-    } else {
-        await member.send(
-            `Hi ${member.user.username}, and welcome to JAMHacks! You probably don't want to do this, but we have to. Please verify your email with \`!verify <email>\` or \`/verify email: <email>\`.`,
-        )
+        if (organizer) {
+            await member.send(
+                `Hi ${organizer.name}, I can't give admin roles for some reason, so you'll have to wait for someone to give you the organizer role.`,
+            )
+            await member.setNickname(organizer.name)
+        } else {
+            const existingMember = await db.participant.findFirst({
+                where: {
+                    discord: {
+                        is: {
+                            username: member.user.username,
+                            discriminator: member.user.discriminator,
+                        },
+                    },
+                },
+            })
+
+            if (existingMember) {
+                await db.discordUser.update({
+                    where: {
+                        username_discriminator: {
+                            username: member.user.username,
+                            discriminator: member.user.discriminator,
+                        },
+                    },
+                    data: {
+                        uid: member.user.id,
+                    },
+                })
+
+                await member.setNickname(existingMember.name)
+                await member.roles.add(getNewRoles(existingMember.role))
+            } else {
+                await member.send(
+                    `Hi ${member.user.username}, and welcome to JAMHacks! You probably don't want to do this, but we have to. Please verify your email with \`/verify email: <email>\` or \`!verify <email>\`.`,
+                )
+            }
+        }
     }
 })

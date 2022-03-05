@@ -4,7 +4,7 @@ import Prisma from "@prisma/client"
 export const {Role} = Prisma
 export type Role = Prisma.Role
 
-export const enum DiscordRoles {
+export enum DiscordRoles {
     Organizer = "948348689783595018",
     Verified = "948354806722986014",
     Judge = "948378061794074685",
@@ -14,4 +14,24 @@ export const enum DiscordRoles {
     WorkshopRunner = "948379262967246849",
     Panelist = "948379332924018719",
     Sponsor = "948379341010636810",
+}
+
+export const getDiscordRoleFromDbRole = (role?: Role | null): DiscordRoles | undefined => {
+    if (role === undefined || role === null || role === Role.Organizer) {
+        return undefined
+    }
+
+    return DiscordRoles[role]
+}
+
+export const getNewRoles = (role?: Role | null): DiscordRoles[] => {
+    const newRoles = [DiscordRoles.Verified]
+
+    const newRole = getDiscordRoleFromDbRole(role)
+
+    if (newRole) {
+        newRoles.push(newRole)
+    }
+
+    return newRoles
 }
