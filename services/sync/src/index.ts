@@ -1,6 +1,7 @@
 import "./dotenv"
 import * as yup from "yup"
 import {GoogleSpreadsheet, type GoogleSpreadsheetRow} from "google-spreadsheet"
+import {Status} from "@luke-zhang-04/utils"
 import db from "./db"
 import fetch from "node-fetch"
 import prisma from "@prisma/client"
@@ -14,6 +15,7 @@ const rowSchema = yup.object({
     Email: yup.string().email().required(),
     Role: yup.string().oneOf(Object.keys(prisma.Role) as (keyof typeof prisma.Role)[]),
     "Discord Account": yup.string(),
+    "Discord User ID": yup.string(),
 })
 
 type ValidatedRow = GoogleSpreadsheetRow & typeof rowSchema.__outputType
@@ -27,6 +29,7 @@ interface TransformedRow {
     email: string
     role?: prisma.Role
     discordAccount?: string
+    discordUserId?: string
 }
 
 const transformRow = (row: ValidatedRow): TransformedRow => ({
@@ -35,6 +38,7 @@ const transformRow = (row: ValidatedRow): TransformedRow => ({
     email: row.Email,
     role: row.Role as prisma.Role,
     discordAccount: row["Discord Account"],
+    discordUserId: row["Discord User ID"],
 })
 
 const doc = new GoogleSpreadsheet("1nMKbyD4OppQBVQUjYroC_8YK49Xr5nE8yvIYP-ZuORI")
@@ -59,8 +63,9 @@ const getDiscordUid = async (
 
     if (request.ok) {
         return ((await request.json()) as {id: string})?.id
+    } else if (request.status !== Status.NotFound) {
+        console.error("ERROR", (await request.text()) || request.status)
     }
-    console.error("ERROR", (await request.text()) || request.status)
 
     return undefined
 }
@@ -123,29 +128,52 @@ const pull = async (row: TransformedRow): Promise<void> => {
 }
 
 const push = async (
-    participant: prisma.Participant & {
+    dbParticipant: prisma.Participant & {
         discord: prisma.DiscordUser | null
     },
     rows: TransformedRow[],
 ): Promise<Defined<typeof rowSchema.__outputType> | undefined> => {
-    const participantRow = rows.find((row) => row.email === participant.email)
+    const sheetParticipant = rows.find((row) => row.email === dbParticipant.email)
 
-    if (!participantRow) {
+    if (!sheetParticipant) {
         return {
-            Name: participant.name,
-            Email: participant.email,
-            Role: participant.role ?? "",
-            "Discord Account": participant.discord
-                ? `${participant.discord.username}#${participant.discord.discriminator}`
+            Name: dbParticipant.name,
+            Email: dbParticipant.email,
+            Role: dbParticipant.role ?? "",
+            "Discord Account": dbParticipant.discord
+                ? `${dbParticipant.discord.username}#${dbParticipant.discord.discriminator}`
                 : "",
+            "Discord User ID": dbParticipant.discord?.uid ?? "",
         }
     }
-    if (!participantRow.discordAccount && participant.discord) {
-        participantRow.raw[
-            "Discord Account"
-        ] = `${participant.discord.username}#${participant.discord.discriminator}`
 
-        await participantRow.raw.save()
+    let didChange = false
+
+    if (!sheetParticipant.discordAccount && dbParticipant.discord) {
+        sheetParticipant.raw[
+            "Discord Account"
+        ] = `${dbParticipant.discord.username}#${dbParticipant.discord.discriminator}`
+        didChange = true
+    }
+    if (!sheetParticipant.discordUserId) {
+        if (dbParticipant.discord?.uid) {
+            sheetParticipant.raw["Discord User ID"] = dbParticipant.discord.uid
+            didChange = true
+        } else if (dbParticipant.discord) {
+            const uid = await getDiscordUid(
+                dbParticipant.discord.username,
+                dbParticipant.discord.discriminator,
+            )
+
+            if (uid) {
+                sheetParticipant.raw["Discord User ID"] = uid
+                didChange = true
+            }
+        }
+    }
+
+    if (didChange) {
+        await sheetParticipant.raw.save()
     }
 
     return
