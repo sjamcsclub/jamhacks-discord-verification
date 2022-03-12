@@ -154,3 +154,7 @@ client.on("guildMemberAdd", async (member) => {
         }
     }
 })
+
+process.on("exit", () => client.destroy())
+process.on("beforeExit", () => client.destroy())
+process.on("SIGINT", () => client.destroy())
