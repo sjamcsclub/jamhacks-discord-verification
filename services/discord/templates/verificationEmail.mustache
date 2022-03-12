@@ -8,43 +8,29 @@
 
     <style>
       .container {
+        transition: max-width 0.5s ease;
         width: 100%;
+        max-width: 720px;
         padding-right: 12px;
         padding-left: 12px;
         margin-right: auto;
         margin-left: auto;
       }
 
-      @media (min-width: 576px) {
-        .container {
-          max-width: 540px;
-        }
-      }
-      @media (min-width: 768px) {
-        .container {
-          max-width: 720px;
-        }
-      }
-      @media (min-width: 992px) {
-        .container {
-          max-width: 960px;
-        }
-      }
-      @media (min-width: 1200px) {
-        .container {
-          max-width: 1140px;
-        }
-      }
-      @media (min-width: 1400px) {
-        .container {
-          max-width: 1320px;
-        }
-      }
-
       #banner-img {
-        width: 100%;
+        width: 25%;
         height: auto;
         margin-bottom: 50px;
+        margin-left: auto;
+        margin-right: auto;
+        display: block;
+        max-width: 250px;
+      }
+
+      @media (max-width: 576px) {
+        #banner-img {
+          width: 75%;
+        }
       }
 
       #content {
@@ -53,15 +39,19 @@
       }
 
       body {
-        color: #7b0ff7;
-        background-color: #efe0ff;
-        font-family: poppins, Arial, sans-serif;
+        color: #737373;
+        background-color: #f9f9f9;
+        font-family: Whitney, Helvetica Neue, Helvetica, Arial, Lucida Grande, sans-serif;
         font-weight: 500;
         font-variant: tabular-nums;
         line-height: 1.5715;
         padding: 0;
         margin: 0;
-        font-size: 20px;
+        font-size: 16px;
+      }
+
+      .text-dark {
+        color: #202225;
       }
 
       .profile-img {
@@ -141,29 +131,59 @@
         width: fit-content;
         text-align: center;
       }
+
+      #main-content {
+        background-color: white;
+        padding: 50px;
+        border: none;
+        border-radius: 3px;
+      }
+
+      hr {
+        color: #f9f9f9;
+      }
+
+      .footer {
+        margin-top: 10px;
+        color: #999;
+        text-align: center;
+      }
     </style>
   </head>
   <body>
-    <div id="content" class="container">
+    <div id="content">
       <img
         id="banner-img"
         src="https://raw.githubusercontent.com/sjamcsclub/jamhacks-discord-verification/master/services/discord/media/banner.png"
       />
-      <p>Hi {{ name }}, and welcome to JAMHacks 6!</p>
-      <p>
-        Please verify your identity for {{ username }}#{{ discriminator }} so we know it&apos;s
-        you. If this is not your Discord account, you can ignore this email.
-        <strong>Do not verify this identity if it is not you.</strong>
-      </p>
-      <div id="info">
-        <img class="profile-img" src="{{{avatarURL}}}" />
-        <p id="username"
-          ><span class="username">{{ username }}</span
-          ><span class="discriminator">#{{ discriminator }}</span></p
-        >
-        <a href="{{{url}}}" class="btn btn-primary">Verify</a>
+      <div class="container" id="main-content">
+        <p>Hi <span class="text-dark">{{ name }}</span>, and welcome to JAMHacks 6!</p>
+        <p>
+          Please verify your identity for
+          <span class="text-dark">{{ username }}#{{ discriminator }}</span> so we know it&apos;s
+          you. If this is not your Discord account, you can ignore this email.
+          <strong class="text-dark">Do not verify this identity if it is not you.</strong>
+        </p>
+        <div id="info">
+          <img class="profile-img" src="{{{avatarURL}}}" />
+          <p id="username">
+            <span class="username">{{ username }}</span
+            ><span class="discriminator">#{{ discriminator }}</span>
+          </p>
+          <a href="{{{url}}}" class="btn btn-primary">Verify</a>
+        </div>
+        <small>Full link: <a href="{{{url}}}">{{{url}}}</a></small>
+        <hr />
+        <small>Need help? Contact an organizer.</small>
       </div>
-      <p>Full link: <a href="{{{url}}}">{{{url}}}</a></p>
+      <div class="footer">
+        <small
+          >Sent by
+          <a href="https://jamhacks.ca/" target="_blank" rel="noopener noreferrer"
+            >JAMHacks</a
+          ></small
+        >
+      </div>
     </div>
   </body>
 </html>

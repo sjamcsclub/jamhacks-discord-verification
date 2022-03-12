@@ -2,4 +2,5 @@
   "[prisma]": {
     "editor.defaultFormatter": "Prisma.prisma",
   },
+  "liveServer.settings.port": 5501,
 }
