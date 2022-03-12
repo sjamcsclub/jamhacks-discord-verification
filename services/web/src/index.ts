@@ -63,8 +63,6 @@ app.get("/", (_, response) =>
 )
 
 app.get("/verify/:data", catcher(routes.verify))
-app.get("/confirm/:data", catcher(routes.confirm))
-app.get("/success", catcher(routes.success))
 
 app.use((_, response) =>
     response

@@ -3,6 +3,7 @@ import {decodeAndVerify, fetchWithTimeout} from "@luke-zhang-04/utils/node"
 import {Status} from "@luke-zhang-04/utils"
 import {dataSchema} from "../schemas"
 import db from "../db"
+import fetch from "node-fetch"
 
 export const verify: express.RequestHandler<{
     data: string
@@ -24,7 +25,6 @@ export const verify: express.RequestHandler<{
             },
         }),
     ])
-    const img = await res.arrayBuffer()
 
     if (!participant) {
         return response.status(Status.InternalError).json({
@@ -37,6 +37,19 @@ export const verify: express.RequestHandler<{
             name: participant.name,
         })
     }
+
+    await db.discordUser.create({
+        data: {
+            uid: data.discord.userId,
+            username: data.discord.username,
+            discriminator: data.discord.discriminator,
+            email: data.email,
+        },
+    })
+
+    await fetch("http://localhost:8383", {method: "POST", body: data.discord.userId})
+
+    const img = await res.arrayBuffer()
 
     return response.status(Status.Ok).render("verify", {
         ...data.discord,
