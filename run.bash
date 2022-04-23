@@ -27,7 +27,7 @@ log() {
         output="${output}${line}\n"
     done
 
-    if ! [[ "${2}" ]]; then
+    if ! [[ "${2}" ]] || [[ "${2}" == "false" ]]; then
         echo -e "$output"
     fi
 }
@@ -37,5 +37,10 @@ onExit() {
 }
 
 trap onExit SIGINT SIGTERM
+
+if ! [[ "$1" == "--skip-build" ]]; then
+    /bin/docker-compose -f "${__dirname}/docker-compose.yml" build 2>&1 | log "log" false
+    echo ""
+fi
 
 /bin/docker-compose -f "${__dirname}/docker-compose.yml" up --abort-on-container-exit 2>&1 | log "log"
