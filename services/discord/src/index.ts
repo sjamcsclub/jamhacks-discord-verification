@@ -2,6 +2,7 @@ import "./dotenv"
 import "./receiver"
 import {Client, type Commands, builtins, createCommands, middleware} from "discord-express"
 import {MessageActionRow, MessageButton} from "discord.js"
+import {autoRoles, setInviteCache} from "./autoRole"
 import db from "./db"
 import {getNewRoles} from "./roles"
 import {guildId} from "./globals"
@@ -86,7 +87,7 @@ client.error(async (err, _, response) => {
     await response.replyEphemeral(String(err))
 })
 
-client.on("ready", (_client) => {
+client.on("ready", async (_client) => {
     console.log("ready")
 
     _client.user.setPresence({
@@ -98,10 +99,18 @@ client.on("ready", (_client) => {
             },
         ],
     })
+
+    const guild = await _client.guilds.fetch({cache: true, guild: guildId})
+
+    setInviteCache(await guild.invites.fetch({cache: true}))
 })
 
 client.on("guildMemberAdd", async (member) => {
     if (member.guild.id === guildId) {
+        if (await autoRoles(member)) {
+            return
+        }
+
         const organizer = await db.participant.findFirst({
             where: {
                 discord: {
