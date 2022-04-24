@@ -1,4 +1,5 @@
 import {Collection, GuildMember, Invite} from "discord.js"
+import {DiscordRoles} from "./roles"
 import linkRoles from "./autorole-mapping.json"
 import {pick} from "@luke-zhang-04/utils"
 
@@ -25,7 +26,7 @@ export const autoRoles = async (member: GuildMember): Promise<boolean> => {
         const newRole = linkRoles.find(([link]) => link === usedInvite.code)?.[1]
 
         if (newRole) {
-            member.roles.add(newRole)
+            member.roles.add(newRole, DiscordRoles.Verified)
 
             return true
         }
