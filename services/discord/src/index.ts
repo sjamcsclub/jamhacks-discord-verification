@@ -1,10 +1,10 @@
 import "./dotenv"
 import "./receiver"
 import {Client, type Commands, builtins, createCommands, middleware} from "discord-express"
+import {DiscordRoles, getNewRoles} from "./roles"
 import {MessageActionRow, MessageButton} from "discord.js"
 import {autoRoles, setInviteCache} from "./autoRole"
 import db from "./db"
-import {getNewRoles} from "./roles"
 import {guildId} from "./globals"
 import {verify} from "./verify"
 
@@ -124,10 +124,9 @@ client.on("guildMemberAdd", async (member) => {
         })
 
         if (organizer) {
-            await member.send(
-                `Hi ${organizer.name}, I can't give admin roles for some reason, so you'll have to wait for someone to give you the organizer role.`,
-            )
+            await member.send(`Hi ${organizer.name}, I've given you the organizer role.`)
             await member.setNickname(organizer.name)
+            await member.roles.add(DiscordRoles.Organizer)
         } else {
             const existingMember = await db.participant.findFirst({
                 where: {
