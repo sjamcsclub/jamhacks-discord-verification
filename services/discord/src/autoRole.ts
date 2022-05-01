@@ -26,7 +26,7 @@ export const autoRoles = async (member: GuildMember): Promise<boolean> => {
         const newRole = linkRoles.find(([link]) => link === usedInvite.code)?.[1]
 
         if (newRole) {
-            member.roles.add(newRole, DiscordRoles.Verified)
+            member.roles.add([newRole, DiscordRoles.Verified])
 
             return true
         }
