@@ -37,9 +37,9 @@ const getConclusionMessage = (role: Role | null): string => {
     }
 }
 
-const getMemberId: http.RequestListener = async (request: http.IncomingMessage, response) => {
+const getMemberId: http.RequestListener = async (request, response) => {
     const match = request.url?.match(
-        /\/getUser\/(?<username>[0-9a-zA-Z%]+)\/(?<discriminator>[0-9]{4})$/u,
+        /\/getUserId\/(?<username>[0-9a-zA-Z%]+)\/(?<discriminator>[0-9]{4})$/u,
     )
     const username = match?.groups?.username
         ? decodeURIComponent(match.groups.username)
@@ -59,6 +59,33 @@ const getMemberId: http.RequestListener = async (request: http.IncomingMessage, 
                 ({user: _user}) =>
                     _user.username === username && _user.discriminator === discriminator,
             )?.user
+        }
+
+        if (user) {
+            response.writeHead(Status.Ok, {
+                "Content-Type": "application/json",
+            })
+            response.end(JSON.stringify(pick(user, "id", "username", "discriminator")))
+        } else {
+            response.writeHead(Status.NotFound)
+            response.end()
+        }
+
+        return
+    }
+}
+
+const getMemberUsername: http.RequestListener = async (request, response) => {
+    const match = request.url?.match(/\/getUsername\/(?<userId>[0-9]+)$/u)
+    const userId = match?.groups?.userId
+
+    if (userId) {
+        const _guild = await getGuild()
+
+        let user = _guild.members.cache.find(({user: _user}) => _user.id === userId)?.user
+
+        if (user === undefined) {
+            user = (await _guild.members.fetch(userId))?.user
         }
 
         if (user) {
@@ -95,6 +122,13 @@ const postVerification: http.RequestListener = async (request, response) => {
     const user =
         client.users.cache.find((_user) => _user.id === uid) ?? (await client.users.fetch(uid))
 
+    if (!user) {
+        response.writeHead(Status.NotFound)
+        response.end()
+
+        return
+    }
+
     const userInfo = await db.participant.findFirst({
         where: {
             discord: {
@@ -128,8 +162,12 @@ const postVerification: http.RequestListener = async (request, response) => {
 const server = http.createServer(async (request, response) => {
     try {
         // Get user by username and discriminator from jamhacks server
-        if (request.url && /\/getUser\//u.test(request.url) && request.method === "GET") {
-            await getMemberId(request, response)
+        if (request.url && request.method === "GET") {
+            if (/\/getUserId\//u.test(request.url)) {
+                await getMemberId(request, response)
+            } else if (/\/getUsername\//u.test(request.url)) {
+                await getMemberUsername(request, response)
+            }
 
             return
         }

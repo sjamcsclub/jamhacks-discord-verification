@@ -15,7 +15,7 @@ const rowSchema = yup.object({
     Email: yup.string().email().required(),
     Role: yup.string().oneOf(Object.keys(prisma.Role) as (keyof typeof prisma.Role)[]),
     "Discord Account": yup.string(),
-    "Discord User ID": yup.string(),
+    "Discord ID": yup.string(),
 })
 
 type ValidatedRow = GoogleSpreadsheetRow & typeof rowSchema.__outputType
@@ -38,7 +38,7 @@ const transformRow = (row: ValidatedRow): TransformedRow => ({
     email: row.Email,
     role: row.Role as prisma.Role,
     discordAccount: row["Discord Account"],
-    discordUserId: row["Discord User ID"],
+    discordUserId: row["Discord ID"],
 })
 
 const doc = new GoogleSpreadsheet("1nMKbyD4OppQBVQUjYroC_8YK49Xr5nE8yvIYP-ZuORI")
@@ -57,7 +57,7 @@ const getDiscordUid = async (
     username: string,
     discriminator: string | number,
 ): Promise<string | undefined> => {
-    const request = await fetch(`http://localhost:8383/getUser/${username}/${discriminator}`, {
+    const request = await fetch(`http://localhost:8383/getUserId/${username}/${discriminator}`, {
         method: "GET",
     })
 
@@ -70,7 +70,53 @@ const getDiscordUid = async (
     return undefined
 }
 
+const getDiscordUsername = async (
+    uid: string,
+): Promise<[username: string, discriminator: string] | undefined> => {
+    const request = await fetch(`http://localhost:8383/getUsername/${uid}`, {
+        method: "GET",
+    })
+
+    if (request.ok) {
+        const response = (await request.json()) as {username: string; discriminator: string}
+
+        return [response.username, response.discriminator]
+    } else if (request.status !== Status.NotFound) {
+        console.error("ERROR", (await request.text()) || request.status)
+    }
+
+    return undefined
+}
+
+const getDiscordInfo = async (
+    row: TransformedRow,
+): Promise<{
+    userData: [username: string, discriminator: string] | undefined
+    uid: string | undefined
+}> => {
+    let userData = row.discordAccount?.split("#") as
+        | [username: string, discriminator: string]
+        | undefined
+    let uid = row.discordUserId
+
+    if (uid) {
+        if (!userData) {
+            const newUserData = await getDiscordUsername(uid)
+
+            if (newUserData) {
+                userData = newUserData
+            }
+        }
+    } else if (userData) {
+        uid = await getDiscordUid(...userData)
+    }
+
+    return {userData, uid}
+}
+
 const pull = async (row: TransformedRow): Promise<void> => {
+    // Check for manually inserted usernames
+
     const existing = await db.participant.findUnique({
         where: {
             email: row.email,
@@ -79,51 +125,49 @@ const pull = async (row: TransformedRow): Promise<void> => {
     })
 
     if (existing) {
-        // Check for manually inserted usernames
-        if (row.discordAccount && !existing.discord) {
-            const userData = row.discordAccount.split("#") as
-                | [username: string, discriminator: string]
-            const uid = await getDiscordUid(...userData)
+        if ((row.discordAccount || row.discordUserId) && !existing.discord) {
+            const {userData, uid} = await getDiscordInfo(row)
 
-            await db.discordUser.upsert({
-                where: {
+            if (uid && userData) {
+                await db.discordUser.upsert({
+                    where: {
+                        email: row.email,
+                    },
+                    update: {
+                        username: userData?.[0],
+                        discriminator: userData?.[1],
+                        uid,
+                    },
+                    create: {
+                        username: userData?.[0],
+                        discriminator: userData?.[1],
+                        uid,
+                        email: row.email,
+                    },
+                })
+            }
+        }
+    } else {
+        const {userData, uid} = await getDiscordInfo(row)
+
+        if (uid) {
+            await db.participant.create({
+                data: {
                     email: row.email,
-                },
-                update: {
-                    username: userData[0],
-                    discriminator: userData[1],
-                    uid,
-                },
-                create: {
-                    username: userData[0],
-                    discriminator: userData[1],
-                    uid,
-                    email: row.email,
+                    name: row.name,
+                    role: row.role,
+                    discord: userData
+                        ? {
+                              create: {
+                                  username: userData[0],
+                                  discriminator: userData[1],
+                                  uid,
+                              },
+                          }
+                        : undefined,
                 },
             })
         }
-    } else {
-        const userData = row.discordAccount?.split("#") as
-            | [username: string, discriminator: string]
-            | undefined
-        const uid = userData ? await getDiscordUid(...userData) : undefined
-
-        await db.participant.create({
-            data: {
-                email: row.email,
-                name: row.name,
-                role: row.role,
-                discord: userData
-                    ? {
-                          create: {
-                              username: userData[0],
-                              discriminator: userData[1],
-                              uid,
-                          },
-                      }
-                    : undefined,
-            },
-        })
     }
 }
 
@@ -143,7 +187,7 @@ const push = async (
             "Discord Account": dbParticipant.discord
                 ? `${dbParticipant.discord.username}#${dbParticipant.discord.discriminator}`
                 : "",
-            "Discord User ID": dbParticipant.discord?.uid ?? "",
+            "Discord ID": dbParticipant.discord?.uid ?? "",
         }
     }
 
@@ -157,7 +201,7 @@ const push = async (
     }
     if (!sheetParticipant.discordUserId) {
         if (dbParticipant.discord?.uid) {
-            sheetParticipant.raw["Discord User ID"] = dbParticipant.discord.uid
+            sheetParticipant.raw["Discord ID"] = dbParticipant.discord.uid
             didChange = true
         } else if (dbParticipant.discord) {
             const uid = await getDiscordUid(
@@ -166,7 +210,7 @@ const push = async (
             )
 
             if (uid) {
-                sheetParticipant.raw["Discord User ID"] = uid
+                sheetParticipant.raw["Discord ID"] = uid
                 didChange = true
             }
         }

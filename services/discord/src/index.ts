@@ -142,10 +142,7 @@ client.on("guildMemberAdd", async (member) => {
             if (existingMember) {
                 await db.discordUser.update({
                     where: {
-                        username_discriminator: {
-                            username: member.user.username,
-                            discriminator: member.user.discriminator,
-                        },
+                        uid: member.user.id,
                     },
                     data: {
                         uid: member.user.id,
