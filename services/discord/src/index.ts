@@ -2,7 +2,7 @@ import "./dotenv"
 import "./receiver"
 import {Client, type Commands, builtins, createCommands, middleware} from "discord-express"
 import {DiscordRoles, getNewRoles} from "./roles"
-import {MessageActionRow, MessageButton} from "discord.js"
+import {type Guild, MessageActionRow, MessageButton} from "discord.js"
 import {autoRoles, setInviteCache} from "./autoRole"
 import db from "./db"
 import {guildId} from "./globals"
@@ -163,3 +163,10 @@ client.on("guildMemberAdd", async (member) => {
 process.on("exit", () => client.destroy())
 process.on("beforeExit", () => client.destroy())
 process.on("SIGINT", () => client.destroy())
+
+let guild: Guild | undefined
+
+export const getGuild = async (): Promise<Guild> =>
+    (guild ??=
+        client.guilds.cache.find((cacheGuild) => cacheGuild.id === guildId) ??
+        (await client.guilds.fetch(guildId)))

@@ -1,3 +1,4 @@
+import Case from "case"
 import Prisma from "@prisma/client"
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -34,4 +35,23 @@ export const getNewRoles = (role?: Role | null): DiscordRoles[] => {
     }
 
     return newRoles
+}
+
+export const getConclusionMessage = (role: Role | null): string => {
+    switch (role) {
+        case null:
+        case undefined:
+        case Role.Organizer:
+            return ""
+        case Role.Hacker:
+            return "Happy hacking!"
+        case Role.Judge:
+            return "Thank you for judging!"
+        case Role.WorkshopRunner:
+            return "Thank you for taking your time to run a workshop!"
+        case Role.Panelist:
+            return "Thank you for being a panelist!"
+        default:
+            return `Thank you for ${Case.sentence(role).toLowerCase()}ing!`
+    }
 }

@@ -1,5 +1,6 @@
 import {Collection, GuildMember, Invite} from "discord.js"
-import {DiscordRoles} from "./roles"
+import {DiscordRoles, type Role, getConclusionMessage} from "./roles"
+
 import linkRoles from "./autorole-mapping.json"
 import {pick} from "@luke-zhang-04/utils"
 
@@ -23,10 +24,18 @@ export const autoRoles = async (member: GuildMember): Promise<boolean> => {
     setInviteCache(member.guild.invites.cache)
 
     if (usedInvite) {
-        const newRole = linkRoles.find(([link]) => link === usedInvite.code)?.[1]
+        const [, newRoleCode, newRoleName] =
+            linkRoles.find(([link]) => link === usedInvite.code) ?? []
 
-        if (newRole) {
-            member.roles.add([newRole, DiscordRoles.Verified])
+        if (newRoleCode && newRoleName) {
+            await member.roles.add([newRoleCode, DiscordRoles.Verified])
+            await member.send(
+                `Hello ${
+                    member.user.username
+                }, and welcome to JAMHacks! I've given you the role for ${newRoleName.toLowerCase()}, and if you need other roles, just ask an organizer! ${getConclusionMessage(
+                    newRoleName as Role,
+                )}`,
+            )
 
             return true
         }

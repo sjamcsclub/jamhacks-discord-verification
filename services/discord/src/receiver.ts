@@ -3,39 +3,13 @@
  *   as the user id, and DMs the user, telling them their email was successfully verified.
  */
 
-import {DiscordAPIError, type Guild} from "discord.js"
-import {Role, getNewRoles} from "./roles"
 import {Status, pick} from "@luke-zhang-04/utils"
+import {client, getGuild} from "."
+import {getConclusionMessage, getNewRoles} from "./roles"
 import Case from "case"
-import {client} from "."
+import {DiscordAPIError} from "discord.js"
 import db from "./db"
-import {guildId} from "./globals"
 import http from "http"
-
-let guild: Guild | undefined
-
-const getGuild = async (): Promise<Guild> =>
-    (guild ??=
-        client.guilds.cache.find((cacheGuild) => cacheGuild.id === guildId) ??
-        (await client.guilds.fetch(guildId)))
-
-const getConclusionMessage = (role: Role | null): string => {
-    switch (role) {
-        case null:
-        case Role.Organizer:
-            return ""
-        case Role.Hacker:
-            return "Happy hacking!"
-        case Role.Judge:
-            return "Thank you for judging!"
-        case Role.WorkshopRunner:
-            return "Thank you for taking your time to run a workshop!"
-        case Role.Panelist:
-            return "Thank you for being a panelist!"
-        default:
-            return `Thank you for ${Case.sentence(role).toLowerCase()}ing!`
-    }
-}
 
 const getMemberId: http.RequestListener = async (request, response) => {
     const match = request.url?.match(
