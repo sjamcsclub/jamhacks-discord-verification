@@ -1,6 +1,6 @@
 import {Collection, GuildMember, Invite} from "discord.js"
 import {DiscordRoles, type Role, getConclusionMessage} from "./roles"
-
+import Case from "case"
 import linkRoles from "./autorole-mapping.json"
 import {pick} from "@luke-zhang-04/utils"
 
@@ -32,7 +32,9 @@ export const autoRoles = async (member: GuildMember): Promise<boolean> => {
             await member.send(
                 `Hello ${
                     member.user.username
-                }, and welcome to JAMHacks! I've given you the role for ${newRoleName.toLowerCase()}, and if you need other roles, just ask an organizer! ${getConclusionMessage(
+                }, and welcome to JAMHacks! I've given you the role for ${Case.sentence(
+                    newRoleName,
+                ).toLowerCase()}s, and if you need other roles, just ask an organizer! ${getConclusionMessage(
                     newRoleName as Role,
                 )}`,
             )
