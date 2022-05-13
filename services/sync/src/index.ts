@@ -265,6 +265,10 @@ const sync = async (): Promise<void> => {
 
 await sync()
 
-setInterval(async () => {
+const interval = setInterval(async () => {
     await sync()
 }, Number(process.env.SYNC_MS) || 3_600_000)
+
+process.on("exit", () => clearInterval(interval))
+process.on("beforeExit", () => clearInterval(interval))
+process.on("SIGINT", () => clearInterval(interval))
