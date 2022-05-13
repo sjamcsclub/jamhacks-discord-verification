@@ -226,36 +226,40 @@ const push = async (
 
 const sync = async (): Promise<void> => {
     console.log("Syncing")
-    doc.resetLocalCache()
-    await doc.loadInfo()
+    try {
+        doc.resetLocalCache()
+        await doc.loadInfo()
 
-    const rawRows = await sheet.getRows()
-    const rawRowData = await validateRows(rawRows)
-    const rows = rawRowData.map(transformRow)
+        const rawRows = await sheet.getRows()
+        const rawRowData = await validateRows(rawRows)
+        const rows = rawRowData.map(transformRow)
 
-    const pullResults = await Promise.allSettled(rows.map((row) => pull(row)))
+        const pullResults = await Promise.allSettled(rows.map((row) => pull(row)))
 
-    for (const pullResult of pullResults) {
-        if (pullResult.status === "rejected") {
-            console.error(pullResult.reason)
+        for (const pullResult of pullResults) {
+            if (pullResult.status === "rejected") {
+                console.error(pullResult.reason)
+            }
         }
+
+        const newRows = (
+            await Promise.all(
+                (
+                    await db.participant.findMany({
+                        include: {
+                            discord: true,
+                        },
+                    })
+                ).map((participant) => push(participant, rows)),
+            )
+        ).filter((val): val is Exclude<typeof val, undefined> => val !== undefined)
+
+        await sheet.addRows(newRows)
+
+        await sheet.saveUpdatedCells()
+    } catch (err) {
+        console.error(err)
     }
-
-    const newRows = (
-        await Promise.all(
-            (
-                await db.participant.findMany({
-                    include: {
-                        discord: true,
-                    },
-                })
-            ).map((participant) => push(participant, rows)),
-        )
-    ).filter((val): val is Exclude<typeof val, undefined> => val !== undefined)
-
-    await sheet.addRows(newRows)
-
-    await sheet.saveUpdatedCells()
     console.log("Finished sync")
 }
 
