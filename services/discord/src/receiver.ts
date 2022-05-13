@@ -127,7 +127,7 @@ const postVerification: http.RequestListener = async (request, response) => {
         const member = _guild.members.cache.find((_member) => _member.user.id === user.id)
 
         await member?.setNickname(userInfo.name)
-        await member?.roles.add(getNewRoles(userRole))
+        await member?.roles.add(getNewRoles(userRole, userInfo.isInPerson))
     }
 
     response.writeHead(Status.NoContent)

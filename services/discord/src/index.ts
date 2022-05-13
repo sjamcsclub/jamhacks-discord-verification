@@ -1,7 +1,7 @@
 import "./dotenv"
 import "./receiver"
 import {Client, type Commands, builtins, createCommands, middleware} from "discord-express"
-import {DiscordRoles, getNewRoles} from "./roles"
+import {DiscordRoles, Role, getNewRoles} from "./roles"
 import {type Guild, MessageActionRow, MessageButton} from "discord.js"
 import {autoRoles, setInviteCache} from "./autoRole"
 import db from "./db"
@@ -148,7 +148,7 @@ client.on("guildMemberAdd", async (member) => {
                 })
 
                 await member.setNickname(existingMember.name)
-                await member.roles.add(getNewRoles(existingMember.role))
+                await member.roles.add(getNewRoles(existingMember.role ?? Role.Hacker))
             } else {
                 await member.send(
                     `Hi ${member.user.username}, and welcome to JAMHacks! You probably don't want to do this, but we have to. Please verify your email with \`/verify email: <email>\` or \`!verify <email>\`.`,

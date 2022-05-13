@@ -15,6 +15,8 @@ export enum DiscordRoles {
     WorkshopRunner = "948379262967246849",
     Panelist = "948379332924018719",
     Sponsor = "948379341010636810",
+    Online = "974476332165656616",
+    InPerson = "974476272040308836",
 }
 
 export const getDiscordRoleFromDbRole = (role?: Role | null): DiscordRoles | undefined => {
@@ -25,8 +27,12 @@ export const getDiscordRoleFromDbRole = (role?: Role | null): DiscordRoles | und
     return DiscordRoles[role]
 }
 
-export const getNewRoles = (role?: Role | null): DiscordRoles[] => {
+export const getNewRoles = (role?: Role | null, isInPerson?: boolean): DiscordRoles[] => {
     const newRoles = [DiscordRoles.Verified]
+
+    if (isInPerson !== undefined) {
+        newRoles.push(isInPerson ? DiscordRoles.InPerson : DiscordRoles.Online)
+    }
 
     const newRole = getDiscordRoleFromDbRole(role)
 
