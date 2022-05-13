@@ -62,11 +62,11 @@ export const verify: DiscordExpressHandler = async (request, response) => {
 
         if (possibleTypo[0]) {
             return response.reply(
-                `Sorry! I don't see ${email} registered, but I do see ${possibleTypo[0].email}.`,
+                `Sorry! I don't see \`${email}\` registered, but I do see \`${possibleTypo[0].email}\`. Did you make a typo?`,
             )
         }
 
-        return response.reply(`Sorry! I don't see ${email} registered.`)
+        return response.reply(`Sorry! I don't see \`${email}\` registered.`)
     } else if (participant.discord) {
         return response.reply(
             "You're already verified! If there is a problem, please contact an organizer.",

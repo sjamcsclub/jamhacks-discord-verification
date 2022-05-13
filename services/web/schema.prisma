@@ -10,9 +10,10 @@ generator client {
 }
 
 model Participant {
-  email String @id @db.VarChar(64)
-  name  String @db.VarChar(64)
-  role  Role?
+  email      String  @id @db.VarChar(64)
+  name       String  @db.VarChar(64)
+  role       Role?
+  isInPerson Boolean @default(false)
 
   discord DiscordUser?
 }

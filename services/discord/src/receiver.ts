@@ -3,9 +3,9 @@
  *   as the user id, and DMs the user, telling them their email was successfully verified.
  */
 
+import {Role, getConclusionMessage, getNewRoles} from "./roles"
 import {Status, pick} from "@luke-zhang-04/utils"
 import {client, getGuild} from "."
-import {getConclusionMessage, getNewRoles} from "./roles"
 import Case from "case"
 import {DiscordAPIError} from "discord.js"
 import db from "./db"
@@ -116,17 +116,18 @@ const postVerification: http.RequestListener = async (request, response) => {
 
     if (userInfo?.discord) {
         const _guild = await getGuild()
+        const userRole = userInfo.role ?? Role.Hacker
 
         await user.send(
             `Thank you for verifying, ${userInfo.name}! I'll give you the role for ${Case.sentence(
-                userInfo.role ?? "unknown role",
-            ).toLowerCase()}s! ${getConclusionMessage(userInfo.role)}`,
+                userRole ?? "unknown role",
+            ).toLowerCase()}s! ${getConclusionMessage(userRole)}`,
         )
 
         const member = _guild.members.cache.find((_member) => _member.user.id === user.id)
 
         await member?.setNickname(userInfo.name)
-        await member?.roles.add(getNewRoles(userInfo.role))
+        await member?.roles.add(getNewRoles(userRole))
     }
 
     response.writeHead(Status.NoContent)
