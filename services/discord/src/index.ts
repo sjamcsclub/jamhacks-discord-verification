@@ -6,7 +6,7 @@ import {type Guild, MessageActionRow, MessageButton} from "discord.js"
 import {autoRoles, setInviteCache} from "./autoRole"
 import db from "./db"
 import {guildId} from "./globals"
-import {verify} from "./verify"
+import {verify} from "./commands/verify"
 
 const commands: Commands = {
     verify: {

@@ -2,8 +2,8 @@ import * as yup from "yup"
 import {type DiscordExpressHandler} from "discord-express"
 import {type Participant} from "@prisma/client"
 import {SendEmailCommand} from "@aws-sdk/client-ses"
-import {checkEmail} from "./utils/checkEmail"
-import db from "./db"
+import {checkEmail} from "../utils/checkEmail"
+import db from "../db"
 import {encodeAndSign} from "@luke-zhang-04/utils/node/crypto"
 import {fileURLToPath} from "url"
 import fs from "fs"
@@ -11,7 +11,7 @@ import juice from "juice"
 import mustache from "mustache"
 import path from "path"
 import {pick} from "@luke-zhang-04/utils"
-import {ses} from "./aws"
+import {ses} from "../aws"
 
 const dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -25,7 +25,7 @@ const slashCommandBodySchema = yup.object({
 
 const sentEmails: {[uid: string]: Set<string>} = {}
 
-const template = fs.readFileSync(`${dirname}/../templates/verificationEmail.mustache`, "utf8")
+const template = fs.readFileSync(`${dirname}/../../templates/verificationEmail.mustache`, "utf8")
 
 export const verify: DiscordExpressHandler = async (request, response) => {
     const email = (
