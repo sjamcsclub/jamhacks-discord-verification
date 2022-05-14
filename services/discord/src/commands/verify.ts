@@ -35,7 +35,9 @@ export const verify: DiscordExpressHandler = async (request, response) => {
     ).email.toLowerCase()
 
     if (sentEmails[request.user.id]?.has(email)) {
-        return await response.replyEphemeral("We've already sent an email to this account")
+        return await response.replyEphemeral(
+            "We've already sent an email to this account. Check your spam/junk.",
+        )
     } else if ((sentEmails[request.user.id]?.size ?? 0) >= 2) {
         return await response.replyEphemeral(
             "You've tried verifying with too many different emails. Please contact an organizer for help.",

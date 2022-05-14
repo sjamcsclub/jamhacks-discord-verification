@@ -148,7 +148,9 @@ client.on("guildMemberAdd", async (member) => {
                 })
 
                 await member.setNickname(existingMember.name)
-                await member.roles.add(getNewRoles(existingMember.role ?? Role.Hacker))
+                await member.roles.add(
+                    getNewRoles(existingMember.role ?? Role.Hacker, existingMember.isInPerson),
+                )
             } else {
                 await member.send(
                     `Hi ${member.user.username}, and welcome to JAMHacks! You probably don't want to do this, but we have to. Please verify your email with \`/verify email: <email>\` or \`!verify <email>\`.`,
