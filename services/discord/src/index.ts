@@ -45,11 +45,11 @@ client.use(
 )
 
 client.use("verify", async (request, response, next) => {
-    if (request.channel?.type !== "DM") {
-        await response.replyEphemeral({content: "Please verify in DMs"})
+    if (request.channel?.type !== "DM" && request.requestType === "message") {
+        await response.replyEphemeral({content: "Please verify in DMs", fallback: "dm"})
 
         try {
-            await request.message?.delete()
+            await request.message.delete()
         } catch {}
 
         return

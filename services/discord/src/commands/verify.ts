@@ -35,13 +35,13 @@ export const verify: DiscordExpressHandler = async (request, response) => {
     ).email.toLowerCase()
 
     if (sentEmails[request.user.id]?.has(email)) {
-        return await response.reply("We've already sent an email to this account")
+        return await response.replyEphemeral("We've already sent an email to this account")
     }
 
     const error = await checkEmail(email)
 
     if (error !== undefined) {
-        return await response.reply(error)
+        return await response.replyEphemeral(error)
     }
 
     const participant = await db.participant.findUnique({
@@ -61,14 +61,14 @@ export const verify: DiscordExpressHandler = async (request, response) => {
         `
 
         if (possibleTypo[0]) {
-            return response.reply(
+            return response.replyEphemeral(
                 `Sorry! I don't see \`${email}\` registered, but I do see \`${possibleTypo[0].email}\`. Did you make a typo?`,
             )
         }
 
-        return response.reply(`Sorry! I don't see \`${email}\` registered.`)
+        return response.replyEphemeral(`Sorry! I don't see \`${email}\` registered.`)
     } else if (participant.discord) {
-        return response.reply(
+        return response.replyEphemeral(
             "You're already verified! If there is a problem, please contact an organizer.",
         )
     }
@@ -118,11 +118,11 @@ export const verify: DiscordExpressHandler = async (request, response) => {
                     Data: "Verify your Discord account for JAMHacks 6",
                 },
             },
-            Source: "luke@jamhacks.ca",
+            Source: "hello@jamhacks.ca",
         }),
     )
 
-    return await response.reply(
+    return await response.replyEphemeral(
         `Hi ${participant.name}! We've sent a link to \`${participant.email}\`. Make sure you verify within the next hour or the link will go bad! If you don't see the email in your inbox, check your spam or junk folder.`,
     )
 }
