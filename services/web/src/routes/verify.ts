@@ -15,7 +15,9 @@ export const verify: express.RequestHandler<{
     )
 
     const [res, participant] = await Promise.all([
-        fetchWithTimeout(data.discord.avatarURL, {method: "GET", timeout: 2500}),
+        data.discord.avatarURL
+            ? fetchWithTimeout(data.discord.avatarURL, {method: "GET", timeout: 2500})
+            : undefined,
         db.participant.findUnique({
             where: {
                 email: data.email,
@@ -49,13 +51,16 @@ export const verify: express.RequestHandler<{
 
     await fetch("http://localhost:8383", {method: "POST", body: data.discord.userId})
 
-    const img = await res.arrayBuffer()
+    const img = await res?.arrayBuffer()
 
     return response.status(Status.Ok).render("verify", {
         ...data.discord,
-        avatarURL: `data:${res.headers.get("content-type")};base64,${Buffer.from(img).toString(
-            "base64",
-        )}`,
+        avatarURL:
+            res && img
+                ? `data:${res.headers.get("content-type")};base64,${Buffer.from(img).toString(
+                      "base64",
+                  )}`
+                : "",
         email: data.email,
         name: participant.name,
         rawData,

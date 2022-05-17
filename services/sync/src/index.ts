@@ -3,12 +3,10 @@ import * as yup from "yup"
 import {GoogleSpreadsheet, type GoogleSpreadsheetRow} from "google-spreadsheet"
 import {Status, pick} from "@luke-zhang-04/utils"
 import db from "./db"
-import fetch from "node-fetch"
+import {fetchWithTimeout} from "@luke-zhang-04/utils/node"
 import prisma from "@prisma/client"
 
 // TODO: sync other fields
-
-type Defined<T> = {[P in keyof T]-?: Exclude<T[P], undefined>}
 
 const rowSchema = yup.object({
     name: yup.string().required(),
@@ -63,9 +61,13 @@ const getDiscordUid = async (
     username: string,
     discriminator: string | number,
 ): Promise<string | undefined> => {
-    const request = await fetch(`http://localhost:8383/getUserId/${username}/${discriminator}`, {
-        method: "GET",
-    })
+    const request = await fetchWithTimeout(
+        `http://localhost:8383/getUserId/${username}/${discriminator}`,
+        {
+            method: "GET",
+            // timeout: 1000,
+        },
+    )
 
     if (request.ok) {
         return ((await request.json()) as {id: string})?.id
@@ -79,8 +81,9 @@ const getDiscordUid = async (
 const getDiscordUsername = async (
     uid: string,
 ): Promise<[username: string, discriminator: string] | undefined> => {
-    const request = await fetch(`http://localhost:8383/getUsername/${uid}`, {
+    const request = await fetchWithTimeout(`http://localhost:8383/getUsername/${uid}`, {
         method: "GET",
+        // timeout: 1000,
     })
 
     if (request.ok) {
@@ -100,9 +103,9 @@ const getDiscordInfo = async (
     userData: [username: string, discriminator: string] | undefined
     uid: string | undefined
 }> => {
-    let userData = row.discordAccount?.split("#") as
-        | [username: string, discriminator: string]
-        | undefined
+    let userData = row.discordAccount
+        ? (row.discordAccount.split("#") as [username: string, discriminator: string])
+        : undefined
     let uid = row.discordUserId
 
     if (uid) {
@@ -179,18 +182,17 @@ const push = async (
         discord: prisma.DiscordUser | null
     },
     rows: TransformedRow[],
-): Promise<Defined<typeof rowSchema.__outputType> | undefined> => {
+): Promise<
+    Partial<Exclude<typeof rowSchema.__outputType, "email" | "name" | "inPerson">> | undefined
+> => {
     const sheetParticipant = rows.find((row) => row.email === dbParticipant.email)
 
     if (!sheetParticipant) {
         return {
-            name: dbParticipant.name,
-            email: dbParticipant.email,
             discordAccount: dbParticipant.discord
                 ? `${dbParticipant.discord.username}#${dbParticipant.discord.discriminator}`
                 : "",
             discordID: dbParticipant.discord?.uid ?? "",
-            inPerson: dbParticipant.isInPerson ? "Yes" : "No",
         }
     }
 
@@ -229,18 +231,17 @@ const sync = async (): Promise<void> => {
     try {
         doc.resetLocalCache()
         await doc.loadInfo()
+        console.log("loaded")
 
         const rawRows = await sheet.getRows()
         const rawRowData = await validateRows(rawRows)
         const rows = rawRowData.map(transformRow)
 
-        const pullResults = await Promise.allSettled(rows.map((row) => pull(row)))
+        console.log("pulling")
 
-        for (const pullResult of pullResults) {
-            if (pullResult.status === "rejected") {
-                console.error(pullResult.reason)
-            }
-        }
+        await Promise.all(rows.map((row) => pull(row)))
+
+        console.log("Pulling complete, pushing to spreadsheet")
 
         const newRows = (
             await Promise.all(

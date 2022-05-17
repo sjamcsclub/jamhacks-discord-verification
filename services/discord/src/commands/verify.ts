@@ -15,12 +15,17 @@ import {ses} from "../aws"
 
 const dirname = path.dirname(fileURLToPath(import.meta.url))
 
+const emailSchema = yup
+    .string()
+    .transform((email) => (typeof email === "string" ? email.replace(/(^<)|(>$)/gu, "") : email))
+    .email()
+
 const messageCommandBodySchema = yup.object({
-    _: yup.array(yup.string()).required().min(1, "provide an email address"),
+    _: yup.array(emailSchema).required().min(1, "provide an email address"),
 })
 
 const slashCommandBodySchema = yup.object({
-    email: yup.string().email().required(),
+    email: emailSchema.required(),
 })
 
 const sentEmails: {[uid: string]: Set<string>} = {}

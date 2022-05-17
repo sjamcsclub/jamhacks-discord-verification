@@ -1,7 +1,7 @@
 import {Collection, GuildMember, Invite} from "discord.js"
 import {DiscordRoles, type Role, getConclusionMessage} from "./roles"
 import Case from "case"
-import linkRoles from "./autorole-mapping.json"
+import linkRoles from "./autorole-mapping.json" assert {type: "json"}
 import {pick} from "@luke-zhang-04/utils"
 
 let inviteCache: Pick<Invite, "code" | "uses">[] = []

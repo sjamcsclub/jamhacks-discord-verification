@@ -4,9 +4,9 @@ import {Client, type Commands, builtins, createCommands, middleware} from "disco
 import {DiscordRoles, Role, getNewRoles} from "./roles"
 import {type Guild, MessageActionRow, MessageButton} from "discord.js"
 import {autoRoles, setInviteCache} from "./autoRole"
+import {getRoles, verify} from "./commands"
 import db from "./db"
 import {guildId} from "./globals"
-import {verify} from "./commands/verify"
 
 const commands: Commands = {
     verify: {
@@ -59,6 +59,7 @@ client.use("verify", async (request, response, next) => {
 })
 
 client.command("verify", verify)
+client.command("getRoles", getRoles)
 
 client.command(
     "help",
@@ -152,9 +153,11 @@ client.on("guildMemberAdd", async (member) => {
                     getNewRoles(existingMember.role ?? Role.Hacker, existingMember.isInPerson),
                 )
             } else {
-                await member.send(
-                    `Hi ${member.user.username}, and welcome to JAMHacks! You probably don't want to do this, but we have to. Please verify your email with \`/verify email: <email>\` or \`!verify <email>\`.`,
-                )
+                try {
+                    await member.send(
+                        `Hi ${member.user.username}, and welcome to JAMHacks! You probably don't want to do this, but we have to. Please verify your email with \`/verify email: <email>\` or \`!verify <email>\`.`,
+                    )
+                } catch {}
             }
         }
     }

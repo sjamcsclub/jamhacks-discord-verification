@@ -14,6 +14,7 @@
 
 -   This codebase is organized as a monorepo, with the usual `packages` directory replaced with `services`
 -   Typescript
+-   For Docker: Docker doesn't allow copying outside of CWD, and doesn't follow symlinks outside the CWD, so there are 3 copies of the Prisma schema located in each service. Hard link them with: `ln -vf schema.prisma services/sync/schema.prisma; ln -vf schema.prisma services/discord/schema.prisma; ln -vf schema.prisma services/web/schema.prisma`
 
 ### Setup
 

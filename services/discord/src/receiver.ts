@@ -118,16 +118,22 @@ const postVerification: http.RequestListener = async (request, response) => {
         const _guild = await getGuild()
         const userRole = userInfo.role ?? Role.Hacker
 
+        const member =
+            _guild.members.cache.find((_member) => _member.user.id === user.id) ??
+            (await _guild.members.fetch(user.id))
+
+        await member.setNickname(userInfo.name)
+        await member.roles.add(getNewRoles(userRole, userInfo.isInPerson))
+
+        if (member === undefined) {
+            console.log(`UNDEFINED MEMBER: ${user.id}, ${user.username}#${user.discriminator}`)
+        }
+
         await user.send(
             `Thank you for verifying, ${userInfo.name}! I'll give you the role for ${Case.sentence(
                 userRole ?? "unknown role",
             ).toLowerCase()}s! ${getConclusionMessage(userRole)}`,
         )
-
-        const member = _guild.members.cache.find((_member) => _member.user.id === user.id)
-
-        await member?.setNickname(userInfo.name)
-        await member?.roles.add(getNewRoles(userRole, userInfo.isInPerson))
     }
 
     response.writeHead(Status.NoContent)
@@ -150,9 +156,11 @@ const server = http.createServer(async (request, response) => {
         await postVerification(request, response)
     } catch (err) {
         if (err instanceof DiscordAPIError) {
+            console.error(err)
             response.writeHead(err.httpStatus)
             response.end(err.toString())
         } else {
+            console.error(err)
             response.writeHead(Status.InternalError)
             response.end(String(err))
         }
