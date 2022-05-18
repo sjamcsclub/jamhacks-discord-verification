@@ -36,4 +36,5 @@ enum Role {
   Panelist
   Volunteer
   Sponsor
+  Photographer
 }

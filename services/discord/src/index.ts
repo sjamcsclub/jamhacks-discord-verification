@@ -9,6 +9,9 @@ import db from "./db"
 import {guildId} from "./globals"
 
 const commands: Commands = {
+    getRoles: {
+        description: "Get verified roles if you didn't get them",
+    },
     verify: {
         description: "Verify your email",
         longDescription: "Make sure this is the same email you registered to JAMHacks 6 with",

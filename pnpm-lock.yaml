@@ -1,4 +1,4 @@
-lockfileVersion: 5.3
+lockfileVersion: 5.4
 
 importers:
 
@@ -20,11 +20,11 @@ importers:
       typescript: ^4.5.5
     devDependencies:
       '@prisma/client': 3.10.0
-      '@typescript-eslint/eslint-plugin': 5.12.0_c467cf9bb49b295941e83ce479a578b7
-      '@typescript-eslint/parser': 5.12.0_eslint@8.9.0+typescript@4.5.5
+      '@typescript-eslint/eslint-plugin': 5.12.0_yrt47g5utmuvsqpihtshtjlyw4
+      '@typescript-eslint/parser': 5.12.0_fhzmdq77bspfhxkfuzq4fbrdsy
       eslint: 8.9.0
       eslint-plugin-prefer-arrow: 1.2.3_eslint@8.9.0
-      eslint-plugin-prettier: 4.0.0_eslint@8.9.0+prettier@2.5.1
+      eslint-plugin-prettier: 4.0.0_o3yyxvqqntu2psyhklvnrymevm
       glob: 7.2.0
       husky: 7.0.4
       lint-staged: 12.3.4
@@ -54,10 +54,10 @@ importers:
       yup: ^0.32.11
     dependencies:
       '@aws-sdk/client-ses': 3.52.0
-      '@luke-zhang-04/utils': github.com/luke-zhang-04/utils/de171d3f7aa6f370be02f465dd5f8fe51f5975f1_eca50ce9fea0458bd46d7d5087b91223
+      '@luke-zhang-04/utils': github.com/luke-zhang-04/utils/de171d3f7aa6f370be02f465dd5f8fe51f5975f1_5ssqz2p6ubcyxvdnpviipoisem
       '@prisma/client': 3.10.0_prisma@3.10.0
       case: 1.6.3
-      discord-express: 0.0.0-a1_d8fe6e5e46e091e305f4ff18da1bb613
+      discord-express: 0.0.0-a1_3d7g4xsg4ci6gbpu74mnug5wcm
       discord.js: 13.6.0
       dotenv: 16.0.0
       juice: 8.0.0
@@ -85,7 +85,7 @@ importers:
       typescript: ^4.5.5
       yup: ^0.32.11
     dependencies:
-      '@luke-zhang-04/utils': github.com/luke-zhang-04/utils/de171d3f7aa6f370be02f465dd5f8fe51f5975f1_eca50ce9fea0458bd46d7d5087b91223
+      '@luke-zhang-04/utils': github.com/luke-zhang-04/utils/de171d3f7aa6f370be02f465dd5f8fe51f5975f1_5ssqz2p6ubcyxvdnpviipoisem
       '@prisma/client': 3.10.0_prisma@3.10.0
       dotenv: 16.0.0
       google-spreadsheet: 3.2.0
@@ -124,7 +124,7 @@ importers:
       typescript: ^4.5.5
       yup: ^0.32.11
     dependencies:
-      '@luke-zhang-04/utils': github.com/luke-zhang-04/utils/de171d3f7aa6f370be02f465dd5f8fe51f5975f1_eca50ce9fea0458bd46d7d5087b91223
+      '@luke-zhang-04/utils': github.com/luke-zhang-04/utils/de171d3f7aa6f370be02f465dd5f8fe51f5975f1_5ssqz2p6ubcyxvdnpviipoisem
       '@prisma/client': 3.10.0_prisma@3.10.0
       compression: 1.7.4
       disposable-email-domains: 1.0.59
@@ -953,6 +953,12 @@ packages:
     resolution: {integrity: sha512-qcUXuemtEu+E5wZSJHNxUXeCZhAfXKQ41D+duX+VYPde7xyEVZci+/oXKJL13tnRs9lR2pr4fod59GT6/X1/yQ==}
     dev: true
 
+  /@types/keyv/3.1.4:
+    resolution: {integrity: sha512-BQ5aZNSCpj7D6K2ksrRCTmKRLEpnPvWDiLPfoGyhZ++8YtiK9d/3DBKPJgry359X/P1PfruyYwvnvwFjuEiEIg==}
+    dependencies:
+      '@types/node': 17.0.18
+    dev: true
+
   /@types/lodash/4.14.178:
     resolution: {integrity: sha512-0d5Wd09ItQWH1qFbEyQ7oTQ3GZrMfth5JkbN3EvTKLXcHLRDSXeLnlvlOn0wvxVIwK5o2M8JzP/OWz7T3NRsbw==}
     dev: false
@@ -1005,6 +1011,12 @@ packages:
     resolution: {integrity: sha512-EEhsLsD6UsDM1yFhAvy0Cjr6VwmpMWqFBCb9w07wVugF7w9nfajxLuVmngTIpgS6svCnm6Vaw+MZhoDCKnOfsw==}
     dev: true
 
+  /@types/responselike/1.0.0:
+    resolution: {integrity: sha512-85Y2BjiufFzaMIlvJDvTTB8Fxl2xfLo4HgmHzVBz08w4wDePCTjYw66PdrolO0kzli3yam/YCgRufyo1DdQVTA==}
+    dependencies:
+      '@types/node': 17.0.18
+    dev: true
+
   /@types/serve-static/1.13.10:
     resolution: {integrity: sha512-nCkHGI4w7ZgAdNkrEu0bv+4xNV/XDqW+DydknebMOQwkpDGx8G+HTlj7R7ABI8i8nKxVw0wtKPi1D+lPOkh4YQ==}
     dependencies:
@@ -1026,7 +1038,7 @@ packages:
       '@types/node': 17.0.18
     dev: false
 
-  /@typescript-eslint/eslint-plugin/5.12.0_c467cf9bb49b295941e83ce479a578b7:
+  /@typescript-eslint/eslint-plugin/5.12.0_yrt47g5utmuvsqpihtshtjlyw4:
     resolution: {integrity: sha512-fwCMkDimwHVeIOKeBHiZhRUfJXU8n6xW1FL9diDxAyGAFvKcH4csy0v7twivOQdQdA0KC8TDr7GGRd3L4Lv0rQ==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
     peerDependencies:
@@ -1037,10 +1049,10 @@ packages:
       typescript:
         optional: true
     dependencies:
-      '@typescript-eslint/parser': 5.12.0_eslint@8.9.0+typescript@4.5.5
+      '@typescript-eslint/parser': 5.12.0_fhzmdq77bspfhxkfuzq4fbrdsy
       '@typescript-eslint/scope-manager': 5.12.0
-      '@typescript-eslint/type-utils': 5.12.0_eslint@8.9.0+typescript@4.5.5
-      '@typescript-eslint/utils': 5.12.0_eslint@8.9.0+typescript@4.5.5
+      '@typescript-eslint/type-utils': 5.12.0_fhzmdq77bspfhxkfuzq4fbrdsy
+      '@typescript-eslint/utils': 5.12.0_fhzmdq77bspfhxkfuzq4fbrdsy
       debug: 4.3.3
       eslint: 8.9.0
       functional-red-black-tree: 1.0.1
@@ -1053,7 +1065,7 @@ packages:
       - supports-color
     dev: true
 
-  /@typescript-eslint/parser/5.12.0_eslint@8.9.0+typescript@4.5.5:
+  /@typescript-eslint/parser/5.12.0_fhzmdq77bspfhxkfuzq4fbrdsy:
     resolution: {integrity: sha512-MfSwg9JMBojMUoGjUmX+D2stoQj1CBYTCP0qnnVtu9A+YQXVKNtLjasYh+jozOcrb/wau8TCfWOkQTiOAruBog==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
     peerDependencies:
@@ -1081,7 +1093,7 @@ packages:
       '@typescript-eslint/visitor-keys': 5.12.0
     dev: true
 
-  /@typescript-eslint/type-utils/5.12.0_eslint@8.9.0+typescript@4.5.5:
+  /@typescript-eslint/type-utils/5.12.0_fhzmdq77bspfhxkfuzq4fbrdsy:
     resolution: {integrity: sha512-9j9rli3zEBV+ae7rlbBOotJcI6zfc6SHFMdKI9M3Nc0sy458LJ79Os+TPWeBBL96J9/e36rdJOfCuyRSgFAA0Q==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
     peerDependencies:
@@ -1091,7 +1103,7 @@ packages:
       typescript:
         optional: true
     dependencies:
-      '@typescript-eslint/utils': 5.12.0_eslint@8.9.0+typescript@4.5.5
+      '@typescript-eslint/utils': 5.12.0_fhzmdq77bspfhxkfuzq4fbrdsy
       debug: 4.3.3
       eslint: 8.9.0
       tsutils: 3.21.0_typescript@4.5.5
@@ -1126,7 +1138,7 @@ packages:
       - supports-color
     dev: true
 
-  /@typescript-eslint/utils/5.12.0_eslint@8.9.0+typescript@4.5.5:
+  /@typescript-eslint/utils/5.12.0_fhzmdq77bspfhxkfuzq4fbrdsy:
     resolution: {integrity: sha512-k4J2WovnMPGI4PzKgDtQdNrCnmBHpMUFy21qjX2CoPdoBcSBIMvVBr9P2YDP8jOqZOeK3ThOL6VO/sy6jtnvzw==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
     peerDependencies:
@@ -1333,6 +1345,8 @@ packages:
       qs: 6.9.7
       raw-body: 2.4.3
       type-is: 1.6.18
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /boolbase/1.0.0:
@@ -1569,6 +1583,8 @@ packages:
       on-headers: 1.0.2
       safe-buffer: 5.1.2
       vary: 1.1.2
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /concat-map/0.0.1:
@@ -1644,14 +1660,25 @@ packages:
 
   /debug/2.6.9:
     resolution: {integrity: sha512-bC7ElrdJaJnPbAP+1EotYvqZsb3ecl5wi6Bfi6BJTUcNowp6cvspg0jXznRTKDjm/E7AdgFBVeAPVMNcKGsHMA==}
+    peerDependencies:
+      supports-color: '*'
+    peerDependenciesMeta:
+      supports-color:
+        optional: true
     dependencies:
       ms: 2.0.0
     dev: false
 
-  /debug/3.2.7:
+  /debug/3.2.7_supports-color@5.5.0:
     resolution: {integrity: sha512-CFjzYYAi4ThfiQvizrFQevTTXHtnCqWfe7x1AhgEscTz6ZbLbfoLRLPugTQyBth6f8ZERVUSyWHFD/7Wu4t1XQ==}
+    peerDependencies:
+      supports-color: '*'
+    peerDependenciesMeta:
+      supports-color:
+        optional: true
     dependencies:
       ms: 2.1.3
+      supports-color: 5.5.0
     dev: true
 
   /debug/4.3.3:
@@ -1730,7 +1757,7 @@ packages:
     deprecated: No longer supported. Install the latest release!
     dev: false
 
-  /discord-express/0.0.0-a1_d8fe6e5e46e091e305f4ff18da1bb613:
+  /discord-express/0.0.0-a1_3d7g4xsg4ci6gbpu74mnug5wcm:
     resolution: {integrity: sha512-9gHpEygrN/zHxbRhIEI2Ul3mrjeZdG3ACGivv+6mEp3Q0Vhe6kDIapXf/2V1QdkHx4XukdOSYsfP2p9/5eqRKg==}
     engines: {node: '>=16.6'}
     peerDependencies:
@@ -1740,7 +1767,7 @@ packages:
       '@types/node':
         optional: true
     dependencies:
-      '@luke-zhang-04/utils': github.com/luke-zhang-04/utils/de171d3f7aa6f370be02f465dd5f8fe51f5975f1_eca50ce9fea0458bd46d7d5087b91223
+      '@luke-zhang-04/utils': github.com/luke-zhang-04/utils/de171d3f7aa6f370be02f465dd5f8fe51f5975f1_5ssqz2p6ubcyxvdnpviipoisem
       '@types/node': 17.0.18
       case: 1.6.3
       discord-api-types: 0.26.1
@@ -1894,7 +1921,7 @@ packages:
       eslint: 8.9.0
     dev: true
 
-  /eslint-plugin-prettier/4.0.0_eslint@8.9.0+prettier@2.5.1:
+  /eslint-plugin-prettier/4.0.0_o3yyxvqqntu2psyhklvnrymevm:
     resolution: {integrity: sha512-98MqmCJ7vJodoQK359bqQWaxOE0CS8paAz/GgjaZLyex4TTk3g9HugoO89EqWCrFiOqn9EVvcoo7gZzONCWVwQ==}
     engines: {node: '>=6.0.0'}
     peerDependencies:
@@ -2096,6 +2123,8 @@ packages:
       type-is: 1.6.18
       utils-merge: 1.0.1
       vary: 1.1.2
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /extend/3.0.2:
@@ -2182,6 +2211,8 @@ packages:
       parseurl: 1.3.3
       statuses: 1.5.0
       unpipe: 1.0.0
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /flat-cache/3.0.4:
@@ -2397,6 +2428,8 @@ packages:
     dependencies:
       '@sindresorhus/is': 0.14.0
       '@szmarczak/http-timer': 1.1.2
+      '@types/keyv': 3.1.4
+      '@types/responselike': 1.0.0
       cacheable-request: 6.1.0
       decompress-response: 3.3.0
       duplexer3: 0.1.4
@@ -3028,7 +3061,7 @@ packages:
     requiresBuild: true
     dependencies:
       chokidar: 3.5.3
-      debug: 3.2.7
+      debug: 3.2.7_supports-color@5.5.0
       ignore-by-default: 1.0.1
       minimatch: 3.1.2
       pstree.remy: 1.1.8
@@ -3465,6 +3498,8 @@ packages:
       on-finished: 2.3.0
       range-parser: 1.2.1
       statuses: 1.5.0
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /serve-static/1.14.2:
@@ -3475,6 +3510,8 @@ packages:
       escape-html: 1.0.3
       parseurl: 1.3.3
       send: 0.17.2
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /setprototypeof/1.2.0:
@@ -3921,7 +3958,7 @@ packages:
     resolution: {integrity: sha512-daZ80A81I3/9lIydI44motWe6n59kRBfNzTuS2bfzVh1nAXi667TOTWWtatxyG+fwgNUiagSj/CWZwRRbevJIg==}
     dev: false
 
-  github.com/luke-zhang-04/utils/de171d3f7aa6f370be02f465dd5f8fe51f5975f1_eca50ce9fea0458bd46d7d5087b91223:
+  github.com/luke-zhang-04/utils/de171d3f7aa6f370be02f465dd5f8fe51f5975f1_5ssqz2p6ubcyxvdnpviipoisem:
     resolution: {tarball: https://codeload.github.com/luke-zhang-04/utils/tar.gz/de171d3f7aa6f370be02f465dd5f8fe51f5975f1}
     id: github.com/luke-zhang-04/utils/de171d3f7aa6f370be02f465dd5f8fe51f5975f1
     name: '@luke-zhang-04/utils'

@@ -17,6 +17,7 @@ export enum DiscordRoles {
     Sponsor = "948379341010636810",
     Online = "974476332165656616",
     InPerson = "974476272040308836",
+    Photographer = "973767257996021820",
 }
 
 export const getDiscordRoleFromDbRole = (role?: Role | null): DiscordRoles | undefined => {
