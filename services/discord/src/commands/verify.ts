@@ -1,17 +1,16 @@
 import * as yup from "yup"
 import {type DiscordExpressHandler} from "discord-express"
 import {type Participant} from "@prisma/client"
-import {SendEmailCommand} from "@aws-sdk/client-ses"
 import {checkEmail} from "../utils/checkEmail"
 import db from "../db"
 import {encodeAndSign} from "@luke-zhang-04/utils/node/crypto"
 import {fileURLToPath} from "url"
 import fs from "fs"
 import juice from "juice"
+import {lambdaSes} from "../aws"
 import mustache from "mustache"
 import path from "path"
 import {pick} from "@luke-zhang-04/utils"
-import {ses} from "../aws"
 
 const dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -112,26 +111,26 @@ export const verify: DiscordExpressHandler = async (request, response) => {
         {},
     )
 
-    await ses.send(
-        new SendEmailCommand({
-            Destination: {
-                ToAddresses: [email],
-            },
-            Message: {
-                Body: {
-                    Html: {
-                        Charset: "UTF-8",
-                        Data: renderedEmail,
+    await lambdaSes.sendEmail({
+        from: "JAMHacks <hello@jamhacks.ca>",
+        dest: {
+            to: [email],
+        },
+        content: {
+            simple: {
+                body: {
+                    html: {
+                        charset: "UTF-8",
+                        data: renderedEmail,
                     },
                 },
-                Subject: {
-                    Charset: "UTF-8",
-                    Data: "Verify your Discord account for JAMHacks 6",
+                subject: {
+                    charset: "UTF-8",
+                    data: "Verify your Discord account for JAMHacks 6",
                 },
             },
-            Source: "hello@jamhacks.ca",
-        }),
-    )
+        },
+    })
 
     return await response.replyEphemeral(
         `Hi ${participant.name}! We've sent a link to \`${participant.email}\`. Make sure you verify within the next hour or the link will go bad! If you don't see the email in your inbox, check your spam or junk folder.`,

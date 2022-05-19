@@ -1,6 +1,7 @@
-import {SESClient, type SESClientConfig} from "@aws-sdk/client-ses"
+import {LambdaClient, LambdaClientConfig} from "@aws-sdk/client-lambda"
+import {LambdaSes} from "lambda-ses"
 
-const config: SESClientConfig = {
+const config: LambdaClientConfig = {
     credentials: {
         accessKeyId: process.env.AWS_ACCESS_KEY_ID,
         secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
@@ -9,4 +10,5 @@ const config: SESClientConfig = {
     region: "us-east-1",
 }
 
-export const ses = new SESClient(config)
+export const lambda = new LambdaClient(config)
+export const lambdaSes = new LambdaSes(lambda, "lambda-ses")

@@ -12,7 +12,7 @@
     "start": "NODE_ENV=development node --experimental-vm-modules --es-module-specifier-resolution=node node_modules/nodemon/bin/nodemon.js lib/index.js"
   },
   "dependencies": {
-    "@aws-sdk/client-ses": "^3.52.0",
+    "@aws-sdk/client-lambda": "^3.94.0",
     "@luke-zhang-04/utils": "github:luke-zhang-04/utils#semver:^2.0.0",
     "@prisma/client": "^3.10.0",
     "case": "^1.6.3",
@@ -20,6 +20,7 @@
     "discord.js": "^13.6.0",
     "dotenv": "^16.0.0",
     "juice": "^8.0.0",
+    "lambda-ses": "github:talentmaker/lambda-ses#semver:^1.0.0",
     "mustache": "^4.2.0",
     "node-fetch": "^3.2.0",
     "yup": "^0.32.11"
