@@ -111,6 +111,8 @@ export const verify: DiscordExpressHandler = async (request, response) => {
         {},
     )
 
+    await response.defer()
+
     await lambdaSes.sendEmail({
         from: "JAMHacks <hello@jamhacks.ca>",
         dest: {
