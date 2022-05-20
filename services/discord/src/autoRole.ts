@@ -29,15 +29,19 @@ export const autoRoles = async (member: GuildMember): Promise<boolean> => {
 
         if (newRoleCode && newRoleName) {
             await member.roles.add([newRoleCode, DiscordRoles.Verified])
-            await member.send(
-                `Hello ${
-                    member.user.username
-                }, and welcome to JAMHacks! I've given you the role for ${Case.sentence(
-                    newRoleName,
-                ).toLowerCase()}s, and if you need other roles, just ask an organizer! ${getConclusionMessage(
-                    newRoleName as Role,
-                )}`,
-            )
+            try {
+                await member.send(
+                    `Hello ${
+                        member.user.username
+                    }, and welcome to JAMHacks! I've given you the role for ${Case.sentence(
+                        newRoleName,
+                    ).toLowerCase()}s, and if you need other roles, just ask an organizer! ${getConclusionMessage(
+                        newRoleName as Role,
+                    )}`,
+                )
+            } catch (err) {
+                console.error(err)
+            }
 
             return true
         }
