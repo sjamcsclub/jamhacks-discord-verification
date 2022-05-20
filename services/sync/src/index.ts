@@ -61,18 +61,22 @@ const getDiscordUid = async (
     username: string,
     discriminator: string | number,
 ): Promise<string | undefined> => {
-    const request = await fetchWithTimeout(
-        `http://localhost:8383/getUserId/${username}/${discriminator}`,
-        {
-            method: "GET",
-            // timeout: 1000,
-        },
-    )
+    try {
+        const request = await fetchWithTimeout(
+            `http://localhost:8383/getUserId/${username}/${discriminator}`,
+            {
+                method: "GET",
+                timeout: 1000,
+            },
+        )
 
-    if (request.ok) {
-        return ((await request.json()) as {id: string})?.id
-    } else if (request.status !== Status.NotFound) {
-        console.error("ERROR", (await request.text()) || request.status)
+        if (request.ok) {
+            return ((await request.json()) as {id: string})?.id
+        } else if (request.status !== Status.NotFound) {
+            console.error("ERROR", (await request.text()) || request.status)
+        }
+    } catch (err) {
+        console.log("ERROR", err, `${username}#${discriminator}`)
     }
 
     return undefined
@@ -81,17 +85,21 @@ const getDiscordUid = async (
 const getDiscordUsername = async (
     uid: string,
 ): Promise<[username: string, discriminator: string] | undefined> => {
-    const request = await fetchWithTimeout(`http://localhost:8383/getUsername/${uid}`, {
-        method: "GET",
-        // timeout: 1000,
-    })
+    try {
+        const request = await fetchWithTimeout(`http://localhost:8383/getUsername/${uid}`, {
+            method: "GET",
+            timeout: 1000,
+        })
 
-    if (request.ok) {
-        const response = (await request.json()) as {username: string; discriminator: string}
+        if (request.ok) {
+            const response = (await request.json()) as {username: string; discriminator: string}
 
-        return [response.username, response.discriminator]
-    } else if (request.status !== Status.NotFound) {
-        console.error("ERROR", (await request.text()) || request.status)
+            return [response.username, response.discriminator]
+        } else if (request.status !== Status.NotFound) {
+            console.error("ERROR", (await request.text()) || request.status)
+        }
+    } catch (err) {
+        console.log("ERROR", err, uid)
     }
 
     return undefined
@@ -231,17 +239,12 @@ const sync = async (): Promise<void> => {
     try {
         doc.resetLocalCache()
         await doc.loadInfo()
-        console.log("loaded")
 
         const rawRows = await sheet.getRows()
         const rawRowData = await validateRows(rawRows)
         const rows = rawRowData.map(transformRow)
 
-        console.log("pulling")
-
         await Promise.all(rows.map((row) => pull(row)))
-
-        console.log("Pulling complete, pushing to spreadsheet")
 
         const newRows = (
             await Promise.all(
